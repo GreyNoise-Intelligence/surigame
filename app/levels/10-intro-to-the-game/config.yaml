@@ -1,0 +1,19 @@
+name: 'Introduction'
+type: text
+
+text: |-
+  Welcome to the Suricata Workshop!
+
+  This is placeholder text for now
+
+  The idea is that we're going to teach you how to write some exploits, and
+  teach you how to write Suricata rules to detect the exploits.
+
+  Later, we'll teach you how to bypass Suricata rules, and how to write more
+  complicated Suricata rules.
+
+  A few things to remember!
+
+  * Have fun!
+  * Try to pretend this is real, and not a game - you can 100% finish levels by detecting very specific strings in the good/bad payloads, but you won't learn much
+  * Ask questions!

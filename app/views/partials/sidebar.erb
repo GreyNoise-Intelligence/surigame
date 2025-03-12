@@ -1,0 +1,21 @@
+<!-- Sidebar Column -->
+<div class="sidebar-container">
+  <div class="sidebar-logo">
+    <a href='/'><img src="<%= GAME_LOGO %>" alt="Logo" width="100%" height="auto"></a>
+  </div>
+  <div class="sidebar-content">
+    <div class="sidebar">
+      <h3>Levels</h3>
+      <ul>
+        <% levels.each do |level| %>
+          <% if level['type'] == 'divider' %>
+            <li><h4><%= level['name'] %></h4></li>
+          <% else %>
+            <li><a href="/level/<%= level['id'] %>"><%= level['name'] %></a></li>
+          <% end %>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</div>
+

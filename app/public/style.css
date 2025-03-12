@@ -1,0 +1,115 @@
+body {
+  color: #ccc; /* Lighter text color */
+  background-color: #162239; /* Darker background for textarea */
+  font-weight: 500; /* Slightly bolder font */
+}
+
+/* Custom styles for the sidebar */
+.sidebar {
+  color: white;
+  padding: 20px;
+  border-radius: 5px 5px 0 0; /* Adjusted for top corners only */
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar li {
+  margin-bottom: 10px;
+}
+
+.sidebar a {
+  color: #ccc; /* Lighter text color */
+  text-decoration: none;
+}
+
+.sidebar a:hover {
+  color: white; /* Brighter hover color */
+}
+
+/* Make the sidebar fixed and extend to the bottom */
+.sidebar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh; /* Full height of the viewport */
+  width: 250px; /* Adjust width as needed */
+  background-color: #162239; /* Darker background for textarea */
+  border-right: 3px solid black;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-logo {
+  padding: 10px;
+  text-align: center;
+  width: 100%; /* Ensure full width */
+}
+
+.sidebar-logo img {
+  width: 100%; /* Make the logo image full width */
+  height: auto; /* Maintain aspect ratio */
+  max-height: 100px; /* Optional: Limit the logo height */
+}
+
+.sidebar-content {
+  flex-grow: 1; /* Fill available space */
+  overflow-y: auto; /* Add scrollbar if content exceeds height */
+  padding-bottom: 50px; /* Space for the footer */
+}
+
+/* Adjust main content to account for the fixed sidebar */
+.main-content {
+  margin-left: 250px; /* Match the width of the sidebar */
+  padding-top: 20px; /* Optional padding */
+}
+
+#exploit {
+  padding: 10px;
+}
+
+#exploit .button-group {
+  text-align: left;
+  margin-top: 10px;
+}
+
+#exploit textarea::placeholder {
+  color: #aaa; /* Lighter placeholder color */
+  font-style: italic; /* Italic font for placeholder */
+}
+
+#request {
+  padding: 10px;
+}
+
+#response {
+  padding: 10px;
+}
+
+.code {
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  width: 100%;
+  min-height: 250px; /* Adjust height as needed */
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #666; /* Subtle border */
+  resize: vertical; /* Allow vertical resizing */
+  box-sizing: border-box; /* Ensure full width within parent */
+  field-sizing: content;
+  background-color: #061229; /* Darker background for textarea */
+  color: white; /* Lighter text color */
+  font-size: 12pt;
+  font-family: monospace;
+  line-height: 20pt;
+
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap; /* CSS3 */
+  white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+  white-space: -pre-wrap; /* Opera 4-6 */
+  white-space: -o-pre-wrap; /* Opera 7 */
+  overflow-wrap: break-word; /* For long words */
+}
