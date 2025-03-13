@@ -141,3 +141,23 @@ body {
   white-space: -o-pre-wrap; /* Opera 7 */
   overflow-wrap: break-word; /* For long words */
 }
+
+.checkmark-container {
+  background-color: white; /* White background */
+  border-radius: 5px; /* Rounded corners */
+  padding: 2px; /* Padding inside the container */
+  margin: 3px;
+  border: 1px solid #008000; /* Optional green border for emphasis */
+  width: 20px; /* Fixed width to make it square */
+  height: 20px; /* Same as width to ensure it's square */
+  /*display: inline-flex; /* Ensures content is centered */
+  display: none;
+  justify-content: center; /* Center checkmark horizontally */
+  align-items: center; /* Center checkmark vertically */
+}
+
+.checkmark {
+  font-size: 16px; /* Adjust size */
+  font-weight: bold; /* Make it bold */
+  color: #008000; /* Green color */
+}

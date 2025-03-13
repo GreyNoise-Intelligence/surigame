@@ -16,6 +16,18 @@ SafeYAML::OPTIONS[:default_mode] = :safe
 GAME_NAME = 'SuriGame'
 GAME_LOGO = '/greynoise.jpg'
 
+# These are what get returned to the user by default
+PUBLIC_FIELDS = %w[
+  id
+  name
+  type
+  divider_before
+  text
+  hints
+  base_request
+  previous
+]
+
 ::SingLogger.set_level_from_string(level: ENV['log_level'] || 'debug')
 LOGGER = ::SingLogger.instance()
 
@@ -44,11 +56,11 @@ end
 LEVELS_BY_ID = LEVELS.map { |l| [l['id'], l] }.to_h
 
 def unlocked_levels
-  return LEVELS
+  return LEVELS.map { |l| l.slice(*PUBLIC_FIELDS) }
 end
 
 def get_level(id)
-  return LEVELS_BY_ID[id]
+  return LEVELS_BY_ID[id].slice(*PUBLIC_FIELDS)
 end
 
 MARKDOWN = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, tables: true, prettify: true)
@@ -129,7 +141,7 @@ post '/api/exploit/:id' do
     return 400, { 'error' => 'Missing request!' }.to_json
   end
 
-  level = get_level(@params[:id])
+  level = LEVELS_BY_ID[@params[:id]]
   if level.nil?
     return 400, { 'error' => 'Invalid level!' }.to_json
   end
@@ -142,8 +154,11 @@ post '/api/exploit/:id' do
       s.write(request)
       response = s.read()
 
+      pp level
+
       return 200, {
         'response' => ::Base64.strict_encode64(response),
+        'completed' => !(response =~ ::Regexp.new(level['expected_output'])).nil?,
       }.to_json
     end
   rescue ::Timeout::Error

@@ -12,9 +12,10 @@
             <li><h4><%= level['divider_before'] %></h4></li>
           <% end %>
 
-          <li><a href="/level/<%= level['id'] %>"><%= level['name'] %></a></li>
+          <li><a href="/level/<%= level['id'] %>"><%= level['name'] %></a> <div class="checkmark-container" id="completed-<%= level['id'] %>"><span class="checkmark">✓</span></div></li>
         <% end %>
       </ul>
+      <button id="clear" class="btn btn-sm btn-secondary">Clear</button>
     </div>
   </div>
 </div>

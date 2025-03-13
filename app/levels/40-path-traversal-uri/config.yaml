@@ -13,3 +13,5 @@ base_request: |-
   GET /picture.php?file=uploads/dragon1.jpg HTTP/1.1
   Host: 1.2.3.4
   Connection: close
+
+expected_output: "root.*0:0"
