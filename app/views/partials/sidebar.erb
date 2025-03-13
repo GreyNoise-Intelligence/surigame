@@ -8,14 +8,13 @@
       <h3>Levels</h3>
       <ul>
         <% levels.each do |level| %>
-          <% if level['type'] == 'divider' %>
-            <li><h4><%= level['name'] %></h4></li>
-          <% else %>
-            <li><a href="/level/<%= level['id'] %>"><%= level['name'] %></a></li>
+          <% if level['divider_before'] %>
+            <li><h4><%= level['divider_before'] %></h4></li>
           <% end %>
+
+          <li><a href="/level/<%= level['id'] %>"><%= level['name'] %></a></li>
         <% end %>
       </ul>
     </div>
   </div>
 </div>
-

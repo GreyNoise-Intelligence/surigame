@@ -1,5 +1,6 @@
 name: 'Path Traversal 101'
 type: exploit
+divider_before: 'Exploitation'
 
 text: |-
   Let's learn how to exploit a path traversal vulnerability!

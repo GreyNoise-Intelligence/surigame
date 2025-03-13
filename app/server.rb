@@ -27,10 +27,18 @@ PROFILE = 'dev' # prod?
 
 SCRIPT = File.expand_path(__FILE__)
 
+# Load the levels from the levels/ directory
 LEVELS = ::Dir.glob(::File.join(__dir__, 'levels', '**', 'config.yaml')).sort.map do |config|
   {
+    # Add the id (based on the filename) to each config file
     'id' => ::Pathname.new(config).parent.basename.to_s,
   }.merge(::YAML.load_file(config))
+end
+
+# Add the next/previous levels
+1.upto(LEVELS.length - 1) do |i|
+  LEVELS[i]['previous'] = LEVELS[i - 1]['id']
+  LEVELS[i - 1]['next'] = LEVELS[i]['id']
 end
 
 LEVELS_BY_ID = LEVELS.map { |l| [l['id'], l] }.to_h

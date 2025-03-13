@@ -89,6 +89,34 @@ body {
   padding: 10px;
 }
 
+.navigation {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.navigation button {
+  margin-right: 10px; /* Add space between buttons */
+  background-color: #061229; /* Coral */
+  color: white;
+  border: 2px solid white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.navigation button:hover {
+  background-color: #FF9900; /* Lighter orange on hover */
+}
+
+.navigation button:last-child {
+  margin-right: 0; /* Remove margin from the last button */
+}
+
+.navigation button:disabled {
+  background-color: #5c636a; /* Coral */
+}
+
 .code {
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
   width: 100%;
