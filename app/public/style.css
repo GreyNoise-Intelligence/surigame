@@ -161,3 +161,7 @@ body {
   font-weight: bold; /* Make it bold */
   color: #008000; /* Green color */
 }
+
+.current-level {
+  font-weight: bold;
+}

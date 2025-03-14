@@ -35,6 +35,10 @@ $(document).ready(() => {
     // Highlight completed levels
     highlight_completed_levels();
 
+    // Highlight the current level
+    $(`#${ $("#id").val() }`).addClass('current-level');
+
+    // Make the clear button work
     $('#clear').on('click', () => {
       if(confirm("Are you sure you want to clear your progress?")) {
         localStorage.removeItem(`progress`);
