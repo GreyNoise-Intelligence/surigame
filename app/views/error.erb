@@ -1,0 +1,15 @@
+<%= erb :'partials/header', :locals => { title: 'Error!' } %>
+<body>
+  <div class="container-fluid">
+    <%= erb :'partials/sidebar', :locals => { levels: levels } %>
+
+      <div class="main-content">
+        <%= error %>
+      </div>
+  </div>
+  <%= erb :'partials/scripts' %>
+  <script>
+    toastr.error("<%= error %>");
+  </script>
+</body>
+</html>
