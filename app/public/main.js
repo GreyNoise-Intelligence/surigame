@@ -21,23 +21,25 @@ const complete_level = (id, name) => {
 
 let level;
 $(document).ready(() => {
-  // Load the level object
-  $.getJSON(`/api/levels/${ $("#id").val() }`)
-    .done((data) => {
-      level = data;
-    })
-    .fail((xhr, status, error) => {
-      console.error(`Error: ${ error }`);
-      toastr.error(`Error: ${ error }`);
+  if ($("#id").length) {
+    // Load the level object
+    $.getJSON(`/api/levels/${ $("#id").val() }`)
+      .done((data) => {
+        level = data;
+      })
+      .fail((xhr, status, error) => {
+        console.error(`Error: ${ error }`);
+        toastr.error(`Error: ${ error }`);
+      });
+
+    // Highlight completed levels
+    highlight_completed_levels();
+
+    $('#clear').on('click', () => {
+      if(confirm("Are you sure you want to clear your progress?")) {
+        localStorage.removeItem(`progress`);
+        location.reload();
+      }
     });
-
-  // Highlight completed levels
-  highlight_completed_levels();
-
-  $('#clear').on('click', () => {
-    if(confirm("Are you sure you want to clear your progress?")) {
-      localStorage.removeItem(`progress`);
-      location.reload();
-    }
-  });
+  }
 });

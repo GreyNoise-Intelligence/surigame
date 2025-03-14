@@ -60,7 +60,7 @@ def unlocked_levels
 end
 
 def get_level(id)
-  return LEVELS_BY_ID[id].slice(*PUBLIC_FIELDS)
+  return LEVELS_BY_ID[id]&.slice(*PUBLIC_FIELDS)
 end
 
 MARKDOWN = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, tables: true, prettify: true)
@@ -89,15 +89,24 @@ end
 get '/level/:id' do
   puts @params[:id]
   level = get_level(@params[:id])
-  pp level
 
-  erb(
-    :"levels/#{ level['type'] }",
-    locals: {
-      levels: unlocked_levels,
-      level: level,
-    }
-  )
+  if level
+    erb(
+      :"levels/#{ level['type'] }",
+      locals: {
+        levels: unlocked_levels,
+        level: level,
+      }
+    )
+  else
+    erb(
+      :error,
+      locals: {
+        levels: unlocked_levels,
+        error: 'No such level!',
+      }
+    )
+  end
 end
 
 # Define routes starting with /api
