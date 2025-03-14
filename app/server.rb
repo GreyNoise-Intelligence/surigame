@@ -5,6 +5,7 @@ require 'sinatra'
 require 'singlogger'
 require 'socket'
 require 'timeout'
+require 'tempfile'
 
 # Markdown
 require 'redcarpet'
@@ -12,6 +13,9 @@ require 'redcarpet'
 # Safe YAML parsing
 require 'safe_yaml'
 SafeYAML::OPTIONS[:default_mode] = :safe
+
+require_relative('./fakecap')
+require_relative('./suricata')
 
 GAME_NAME = 'SuriGame'
 GAME_LOGO = '/greynoise.jpg'
@@ -26,6 +30,9 @@ PUBLIC_FIELDS = %w[
   hints
   base_request
   previous
+  base_rule
+  evil_requests
+  innocent_requests
 ]
 
 ::SingLogger.set_level_from_string(level: ENV['log_level'] || 'debug')
@@ -34,10 +41,16 @@ LOGGER = ::SingLogger.instance()
 # Ideally, we set all these in the Dockerfile
 set :bind, ENV['HOST'] || '0.0.0.0'
 set :port, ENV['PORT'] || '1234'
+# set :logging, Logger::DEBUG
 
 PROFILE = 'dev' # prod?
 
 SCRIPT = File.expand_path(__FILE__)
+
+SURICATA = ENV['suricata'] || `which suricata`.strip
+unless File.executable?(SURICATA)
+  raise "Couldn't find Suricata executable (set with SURICATA=...): #{ SURICATA }"
+end
 
 # Load the levels from the levels/ directory
 LEVELS = ::Dir.glob(::File.join(__dir__, 'levels', '**', 'config.yaml')).sort.map do |config|
@@ -87,9 +100,9 @@ get '/' do
 end
 
 get '/level/:id' do
-  puts @params[:id]
   level = get_level(@params[:id])
 
+  pp level
   if level
     erb(
       :"levels/#{ level['type'] }",
@@ -130,6 +143,7 @@ before do
   rescue StandardError => e
     # Handle any other unexpected errors
     LOGGER.error("Unexpected error: #{ e.message }")
+    puts e.backtrace
 
     halt(500, { error: "Unexpected error: #{ e.message }" }.to_json)
   end
@@ -146,7 +160,7 @@ get '/api/levels/:id' do
 end
 
 post '/api/exploit/:id' do
-  if @body['request'].nil?
+  if @body['request'].nil? || @body['request'].empty?
     return 400, { 'error' => 'Missing request!' }.to_json
   end
 
@@ -163,8 +177,6 @@ post '/api/exploit/:id' do
       s.write(request)
       response = s.read()
 
-      pp level
-
       return 200, {
         'response' => ::Base64.strict_encode64(response),
         'completed' => !(response =~ ::Regexp.new(level['expected_output'])).nil?,
@@ -178,6 +190,75 @@ post '/api/exploit/:id' do
     return 500, { 'error' => 'Connection refused to target server! This is probably an infrastructure problem...' }.to_json
   rescue ::StandardError => e
     LOGGER.error("Error running exploit (#{ e.class }): #{ e }")
+    puts e.backtrace
     return 500, { 'error' => "Error running exploit: #{ e }" }.to_json
+  end
+end
+
+def does_request_match(request, rules)
+  Tempfile.create('request.pcap') do |pcap_file|
+    pcap_file.write(FakeCap.fake_http(request))
+    pcap_file.close
+    run_suricata(pcap_file.to_path, rules, suricata: SURICATA)
+  end
+end
+
+post '/api/suricata/:id' do
+  if @body['rule'].nil? || @body['rule'].empty?
+    return 400, { 'error' => 'Missing rule!' }.to_json
+  end
+
+  level = LEVELS_BY_ID[@params[:id]]
+  if level.nil?
+    return 400, { 'error' => 'Invalid level!' }.to_json
+  end
+
+  begin
+    ::Timeout.timeout(10) do
+      good = true
+      results = []
+
+      level['evil_requests'].each do |evil_request|
+        # Check if the evil request matches
+        evil_test = does_request_match(evil_request['request'], @body['rule'].split(/\r?\n/))
+
+        # Only do this once
+        if results.empty?
+          results.concat((evil_test[:errors] || []).map { |e| { 'type' => 'error', 'message' => "Suricata says: #{ e }" } })
+          unless results.empty?
+            good = false
+          end
+        end
+
+        if evil_test[:results].empty?
+          results << { 'type' => 'miss', 'message' => 'Rule(s) missed an evil payload!', id: evil_request['id'] }
+          good = false
+        else
+          results << { 'type' => 'success', 'message' => 'Rule matched an evil payload!', id: evil_request['id'] }
+        end
+      end
+
+      # Check if any of the good tests match
+      level['innocent_requests'].each do |innocent_request|
+        # We ignore errors because they should be the same as earlier
+        innocent_test = does_request_match(innocent_request['request'], @body['rule'].split(/\r?\n/))
+
+        unless innocent_test[:results].empty?
+          results << { 'type' => 'overmatch', 'message' => 'Rule matched a good payload!!', id: innocent_request['id'] }
+        end
+      end
+
+      return 200, {
+        'completed' => results.all? { |r| r['type'] == 'success' },
+        'result' => results,
+      }.to_json
+    end
+  rescue ::Timeout::Error
+    LOGGER.warn('Timeout!')
+    return 500, { 'error' => 'Rule timed out! Please report, unless you did this on purpose' }.to_json
+  rescue ::StandardError => e
+    LOGGER.error("Error testing rule (#{ e.class }): #{ e }")
+    puts e.backtrace
+    return 500, { 'error' => "Error testing rule: #{ e }" }.to_json
   end
 end

@@ -165,3 +165,29 @@ body {
 .current-level {
   font-weight: bold;
 }
+
+.rule {
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  width: 100%;
+  min-height: 250px; /* Adjust height as needed */
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #666; /* Subtle border */
+  resize: vertical; /* Allow vertical resizing */
+  box-sizing: border-box; /* Ensure full width within parent */
+  field-sizing: content;
+  background-color: #061229; /* Darker background for textarea */
+  color: white; /* Lighter text color */
+  font-size: 12pt;
+  font-family: monospace;
+  line-height: 20pt;
+
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap; /* CSS3 */
+  white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+  white-space: -pre-wrap; /* Opera 4-6 */
+  white-space: -o-pre-wrap; /* Opera 7 */
+  overflow-wrap: break-word; /* For long words */
+}
+
