@@ -217,12 +217,11 @@ post '/api/exploit/:id' do
   caught = does_request_match(request, level['rules'] || [])[:results]&.map do |result|
     result.dig('alert', 'signature') || 'unknown-rule'
   end
-  pp caught
 
   unless caught.nil? || caught.empty?
     return 200, {
       'response' => ::Base64.strict_encode64('Caught by a Suricata rule!'),
-      'caught' => caught,
+      'caught' => caught || [],
       'completed' => false,
     }.to_json
   end
@@ -235,7 +234,7 @@ post '/api/exploit/:id' do
 
       return 200, {
         'response' => ::Base64.strict_encode64(response),
-        'caught' => nil,
+        'caught' => [],
         'completed' => !(response =~ ::Regexp.new(level['expected_output'])).nil?,
       }.to_json
     end

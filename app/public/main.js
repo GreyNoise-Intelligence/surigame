@@ -19,6 +19,44 @@ const complete_level = (id, name) => {
   highlight_completed_levels();
 };
 
+const add_result = (text, cls, icon, scroll_target) => {
+  const new_div = $('<div class="status">')
+  new_div.text(text);
+  new_div.addClass(cls);
+  new_div.append(`<i class="fa ${ icon } status-icon"></i>`);
+
+  if(scroll_target) {
+    new_div.mouseover(function() {
+      scroll_target.addClass("highlight");
+    });
+
+    new_div.mouseout(function() {
+      scroll_target.removeClass("highlight");
+    });
+
+    new_div.click(function() {
+      scroll_target[0].scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+
+      let count = 0;
+      function blink() {
+        if (count < 4) { // Double the times for fadeOut and fadeIn
+          scroll_target.fadeOut(200, function() {
+            scroll_target.fadeIn(200, blink);
+          });
+          count++;
+        }
+      }
+      blink();
+    });
+  }
+
+  $('#results-list').append(new_div);
+};
+
+
 let level;
 $(document).ready(() => {
   if ($("#id").length) {

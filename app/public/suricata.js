@@ -28,56 +28,31 @@ $(document).ready(() => {
         $('#loadingIndicator').hide();
         $('#results-list').empty();
         for (const result of data['results']) {
-          const new_div = $('<div class="status">')
-          new_div.text(result['message']);
-          new_div.addClass(result['type']);
-
-          console.log(result['type']);
-          if(result['type'] == 'success') {
-            new_div.append('<i class="fa fa-check-circle status-icon"></i>');
-          } else if(result['type'] == 'miss') {
-            new_div.append('<i class="fa fa-exclamation-circle status-icon"></i>');
-          } else if(result['type'] == 'overmatch') {
-            new_div.append('<i class="fa fa-exclamation-circle status-icon"></i>');
-          } else {
-            new_div.append('<i class="fa fa-times-circle status-icon"></i>');
-          }
-
           let target = $(`#rule`);
           if(result['id']) {
             target = $(`#request-${ result['id'] }`);
           }
 
-          new_div.mouseover(function() {
-            target.addClass("highlight");
-          });
-
-          new_div.mouseout(function() {
-            target.removeClass("highlight");
-          });
-
-          new_div.click(function() {
-            target[0].scrollIntoView({
-              behavior: 'smooth',
-              block: 'center'
-            });
-
-            let count = 0;
-            function blink() {
-              if (count < 4) { // Double the times for fadeOut and fadeIn
-                target.fadeOut(200, function() {
-                  target.fadeIn(200, blink);
-                });
-                count++;
-              }
-            }
-            blink();
-          });
-
-          $('#results-list').append(new_div);
+          if(result['type'] == 'success') {
+            add_result(result['message'], result['type'], 'fa-check-circle', target);
+          } else if(result['type'] == 'miss') {
+            add_result(result['message'], result['type'], 'fa-exclamation-circle', target);
+          } else if(result['type'] == 'overmatch') {
+            add_result(result['message'], result['type'], 'fa-exclamation-circle', target);
+          } else {
+            add_result(result['message'], result['type'], 'fa-times-circle', target);
+          }
         }
-        //$('#response').html(hljs.highlight(atob(data['response']), { language: 'html' }).value);
-        //
+
+        // Show it, if it's not already shown
+        $('#results').fadeIn(500);
+
+        // Scroll to the results
+        $('#results')[0].scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+
         if(data['completed'] == true) {
           complete_level(level['id'], level['name']);
         }

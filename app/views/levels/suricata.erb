@@ -6,17 +6,16 @@
     <div class="main-content">
       <%= erb :'partials/level-header', :locals => { level: level } %>
 
-      <%= erb :'components/text', :locals => { level: level } %>
+      <%= erb :'components/text-description-show', :locals => { level: level } %>
 
       <div class="row">
         <div class="col-md-6">
-          <%= erb :'components/suricata-rule', :locals => { level: level } %>
-
-          <%= erb :'components/results', :locals => { level: level } %>
+          <%= erb :'components/rule-edit', :locals => { level: level } %>
+          <%= erb :'components/results-show', :locals => { level: level } %>
         </div>
 
         <div class="col-md-6">
-          <%= erb :'components/suricata-requests', :locals => { level: level } %>
+          <%= erb :'components/requests-show', :locals => { level: level } %>
         </div>
       </div>
 

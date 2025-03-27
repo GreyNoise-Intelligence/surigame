@@ -189,6 +189,7 @@ textarea::placeholder {
 
 #results {
   margin-top: 10px;
+  display: none;
 }
 
 .status {
@@ -202,28 +203,38 @@ textarea::placeholder {
   cursor: pointer;
 }
 
-/* Success styling */
 .success {
   background-color: #2F4F4F; /* Dark greenish background */
   border-color: #3E8E41; /* Green border */
   color: #C6F4D6; /* Light green text */
 }
+.complete {
+  background-color: #2F4F4F; /* Dark greenish background */
+  border-color: #3E8E41; /* Green border */
+  color: #C6F4D6; /* Light green text */
+}
 
-/* Warning styling */
 .miss {
   background-color: #663300; /* Dark brownish background */
   border-color: #FF9900; /* Orange border */
   color: #F7D2C4; /* Light orange text */
 }
-
-/* Warning styling */
 .overmatch {
   background-color: #663300; /* Dark brownish background */
   border-color: #FF9900; /* Orange border */
   color: #F7D2C4; /* Light orange text */
 }
+.unsuccessful {
+  background-color: #663300; /* Dark brownish background */
+  border-color: #FF9900; /* Orange border */
+  color: #F7D2C4; /* Light orange text */
+}
+.caught {
+  background-color: #663300; /* Dark brownish background */
+  border-color: #FF9900; /* Orange border */
+  color: #F7D2C4; /* Light orange text */
+}
 
-/* Failure styling */
 .error {
   background-color: #660033; /* Dark reddish background */
   border-color: #E74C3C; /* Red border */
