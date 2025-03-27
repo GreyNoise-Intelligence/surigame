@@ -29,6 +29,7 @@ PUBLIC_FIELDS = %w[
   text
   hints
   base_request
+  next
   previous
   base_rule
   evil_requests
@@ -61,9 +62,9 @@ LEVELS = ::Dir.glob(::File.join(__dir__, 'levels', '**', 'config.yaml')).sort.ma
 end
 
 # Add the next/previous levels
-1.upto(LEVELS.length - 1) do |i|
-  LEVELS[i]['previous'] = LEVELS[i - 1]['id']
-  LEVELS[i - 1]['next'] = LEVELS[i]['id']
+0.upto(LEVELS.length - 2) do |i|
+  LEVELS[i + 1]['previous'] = LEVELS[i]['id']
+  LEVELS[i]['next'] = LEVELS[i + 1]['id']
 end
 
 LEVELS_BY_ID = LEVELS.map { |l| [l['id'], l] }.to_h
@@ -199,7 +200,7 @@ def does_request_match(request, rules)
   Tempfile.create('request.pcap') do |pcap_file|
     pcap_file.write(FakeCap.fake_http(request))
     pcap_file.close
-    run_suricata(pcap_file.to_path, rules, suricata: SURICATA)
+    return run_suricata(pcap_file.to_path, rules, suricata: SURICATA)
   end
 end
 
@@ -222,19 +223,22 @@ post '/api/suricata/:id' do
         # Check if the evil request matches
         evil_test = does_request_match(evil_request['request'], @body['rule'].split(/\r?\n/))
 
-        # Only do this once
-        if results.empty?
-          results.concat((evil_test[:errors] || []).map { |e| { 'type' => 'error', 'message' => "ERROR: Suricata says: #{ e }" } })
-          unless results.empty?
-            good = false
-          end
+        # If there's an error in the Suricata rule, only add it to the output
+        # once and then close things out
+        unless evil_test[:errors].empty?
+          results.concat(evil_test[:errors].map { |e| { 'type' => 'error', 'message' => "ERROR: #{ e }" } })
+          return 200, {
+            'completed' => false,
+            'results' => results,
+          }.to_json
         end
 
+        # If the results are empty, it's a miss!
         if evil_test[:results].empty?
           results << { 'type' => 'miss', 'message' => 'BAD: Rule(s) missed an evil payload!', id: evil_request['id'] }
           good = false
         else
-          results << { 'type' => 'success', 'message' => 'GOOD: Rule matched an evil payload!', id: evil_request['id'] }
+          results << { 'type' => 'success', 'message' => 'GOOD: Rule(s) matched an evil payload!', id: evil_request['id'] }
         end
       end
 
@@ -243,8 +247,10 @@ post '/api/suricata/:id' do
         # We ignore errors because they should be the same as earlier
         innocent_test = does_request_match(innocent_request['request'], @body['rule'].split(/\r?\n/))
 
-        unless innocent_test[:results].empty?
-          results << { 'type' => 'overmatch', 'message' => 'BAD: Rule matched an innocent payload!!', id: innocent_request['id'] }
+        if innocent_test[:results].empty?
+          results << { 'type' => 'success', 'message' => "GOOD: Rule(s) didn't match an innocent payload!", id: innocent_request['id'] }
+        else
+          results << { 'type' => 'overmatch', 'message' => 'BAD: Rule(s) matched an innocent payload!!', id: innocent_request['id'] }
         end
       end
 
