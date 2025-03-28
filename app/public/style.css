@@ -192,6 +192,11 @@ textarea::placeholder {
   display: none;
 }
 
+#rules {
+  margin-top: 10px;
+  display: none;
+}
+
 .status {
   width: 100%; /* Full width */
   padding: 20px 40px 20px 20px; /* Adjust padding for icon space */

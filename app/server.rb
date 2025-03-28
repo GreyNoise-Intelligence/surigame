@@ -35,6 +35,7 @@ PUBLIC_FIELDS = %w[
   base_rule
   evil_requests
   innocent_requests
+  rules
 ]
 
 ::SingLogger.set_level_from_string(level: ENV['log_level'] || 'debug')
@@ -66,7 +67,12 @@ LEVELS = ::Dir.glob(::File.join(__dir__, 'levels', '**', 'config.yaml')).sort.ma
 end.map do |level|
   # Give the Suricata rules a consistent ID
   level['rules'] = level['rules']&.each_with_index&.map do |rule, i|
-    rule.gsub('%%ID%%', "#{ level['id'] }-#{ i + 1 }")
+    id = "#{ level['id'] }-#{ i + 1 }"
+
+    {
+      'rule' => rule.gsub('%%ID%%', id),
+      'id' => id,
+    }
   end
 
   level['evil_requests'] = level['evil_requests']&.each_with_index&.map do |request, i|
@@ -208,13 +214,13 @@ post '/api/exploit/:id' do
   request = format_http(@body['request'])
 
   # If there are Suricata rules, do that first
-  matches = does_request_match(request, level['rules'] || [])
+  matches = does_request_match(request, level['rules']&.map { |rule| rule['rule'] } || [])
   unless matches[:errors].nil? || matches[:errors].empty?
     LOGGER.error(matches[:errors])
     return 500, { 'error' => 'One of our Suricata rules caused an error! This is probably a game problem...' }.to_json
   end
 
-  caught = does_request_match(request, level['rules'] || [])[:results]&.map do |result|
+  caught = does_request_match(request, level['rules']&.map { |rule| rule['rule'] } || [])[:results]&.map do |result|
     result.dig('alert', 'signature') || 'unknown-rule'
   end
 

@@ -14,7 +14,7 @@ hints:
 - "/../../../"
 
 rules:
-- 'alert http any any -> any any (msg:"%%ID%%"; flow:to_server,established; http.method; content:"GET"; http.uri.raw; content:"../.."; sid:1030005; rev:1;)'
+- 'alert http any any -> any any (msg:"%%ID%%"; flow:to_server,established; http.method; content:"GET"; http.uri.raw; content:".."; sid:1030005; rev:1;)'
 
 target:
   dev:
