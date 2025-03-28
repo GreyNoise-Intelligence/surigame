@@ -1,14 +1,4 @@
 <div class="navigation">
-  <button class="btn btn-sm btn-secondary <%= level['previous'] ? '' : 'disabled' %>" id="prevPage">Previous</button>
-  <button class="btn btn-sm btn-secondary <%= level['next']     ? '' : 'disabled' %>" id="nextPage">Next</button>
+  <button class="btn btn-sm btn-secondary disabled" id="previousPage">Previous</button>
+  <button class="btn btn-sm btn-secondary disabled" id="nextPage">Next</button>
 </div>
-
-<script>
-  document.getElementById("prevPage").addEventListener("click", function() {
-    document.location = '/level/<%= level['previous'] %>';
-  });
-
-  document.getElementById("nextPage").addEventListener("click", function() {
-    document.location = '/level/<%= level['next'] %>';
-  });
-</script>

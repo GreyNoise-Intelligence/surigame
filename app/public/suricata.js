@@ -1,7 +1,7 @@
 // This code handles suricata-y stuff
-$(document).ready(() => {
+const level_loaded = (level) => {
   // Note: can't use the level variable yet, since it's not populated
-  let rule = localStorage.getItem(`rule-${ $("#id").val() }`);
+  let rule = localStorage.getItem(`rule-${ level['id'] }`);
   if(rule) {
     console.log('Loaded rule from localStorage!');
     $('#rule').val(rule);
@@ -55,7 +55,7 @@ $(document).ready(() => {
         });
 
         if(data['completed'] == true) {
-          complete_level(level['id'], level['name']);
+          complete_level(level['id'], level['name'], level['next']);
         }
         console.log('Response received:', data);
       },
@@ -71,4 +71,4 @@ $(document).ready(() => {
   $('#rule').on('keyup', () => {
     localStorage.setItem(`rule-${ level['id'] }`, $('#rule').val());
   });
-});
+};

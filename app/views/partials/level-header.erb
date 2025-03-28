@@ -1,3 +1,4 @@
 <h1><%= level['name'] %></h1>
 <input type="hidden" id="id" value="<%= level['id'] %>" />
+<input type="hidden" id="next" value="<%= level['next'] %>" />
 <%= erb :'partials/navigation', :locals => { level: level } %>
