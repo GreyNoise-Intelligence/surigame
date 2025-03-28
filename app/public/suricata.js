@@ -16,6 +16,7 @@ $(document).ready(() => {
 
   $('#send').on('click', () => {
     $('#loadingIndicator').show();
+    $('#results-list').empty();
     $.ajax({
       type: 'POST',
       url: `/api/suricata/${ level['id'] }`,
