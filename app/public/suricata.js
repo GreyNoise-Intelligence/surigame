@@ -57,12 +57,23 @@ const level_loaded = (level) => {
         if(data['completed'] == true) {
           complete_level(level['id'], level['name'], level['next']);
         }
-        console.log('Response received:', data);
       },
       error: function(xhr, status, error) {
         $('#loadingIndicator').hide();
-        toastr.error(`Error: ${ error }`);
-        console.error(`Error: ${ error }`);
+        console.log(xhr);
+        if(xhr.responseJSON) {
+          if(xhr.responseJSON.error) {
+            toastr.error(`Error: ${ xhr.responseJSON.error }`);
+            console.error(`Error: ${ error }`);
+            console.error(xhr.responseJSON);
+          } else {
+            toastr.error(`Unknown error: ${ error }: ${ xhr.responseJSON }`);
+            console.error(`Unknown error: ${ error }: ${ xhr.responseJSON }`);
+          }
+        } else {
+          toastr.error(`Unknown error: ${ error }`);
+          console.error(`Unknown error: ${ error }`);
+        }
       }
     });
   });

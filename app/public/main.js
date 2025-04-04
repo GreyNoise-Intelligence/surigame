@@ -108,10 +108,7 @@ const level_loaded_main = (level) => {
     });
   }
 
-  console.log(level['previous']);
-  console.log(visible[level['previous']])
   if(level['previous'] && visible[level['previous']]) {
-    console.log('?');
     $('#previousPage').removeClass('disabled');
     $('#previousPage').on('click', () => {
       document.location = `/level/${ level['previous'] }`;
@@ -136,6 +133,7 @@ $(document).ready(() => {
       })
       .fail((xhr, status, error) => {
         console.error(`Error: ${ error }`);
+        console.error(xhr);
         toastr.error(`Error: ${ error }`);
       });
   }
