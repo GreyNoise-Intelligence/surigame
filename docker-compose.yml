@@ -1,0 +1,72 @@
+services:
+  # web:
+  #   build:
+  #     context: ./app/
+  #     dockerfile: Dockerfile
+  #   container_name: web
+  #   ports:
+  #     - "1234:1234"
+
+  pathing:
+    build:
+      context: ./services/01-pathing/
+      dockerfile: Dockerfile
+    container_name: pathing
+    ports:
+      - "10001:4000"
+
+  sighting:
+    build:
+      context: ./services/02-sighting/
+      dockerfile: Dockerfile
+    container_name: sighting
+    ports:
+      - "10002:80"
+
+  hidden-reports:
+    build:
+      context: ./services/03-hidden-reports/
+      dockerfile: Dockerfile
+    container_name: hidden-reports
+    ports:
+      - "10003:80"
+
+  taxonomy:
+    build:
+      context: ./services/04-taxonomy/
+      dockerfile: Dockerfile
+    container_name: taxonomy
+    ports:
+      - "10004:80"
+
+  detector:
+    build:
+      context: ./services/05-detector/
+      dockerfile: Dockerfile
+    container_name: detector
+    ports:
+      - "10005:80"
+
+  hoard:
+    build:
+      context: ./services/06-hoard/
+      dockerfile: Dockerfile
+    container_name: hoard
+    ports:
+      - "10006:80"
+
+  extinction:
+    build:
+      context: ./services/07-extinction/
+      dockerfile: Dockerfile
+    container_name: extinction
+    ports:
+      - "10007:80"
+
+  evidence:
+    build:
+      context: ./services/08-evidence/
+      dockerfile: Dockerfile
+    container_name: evidence
+    ports:
+      - "10008:80"
