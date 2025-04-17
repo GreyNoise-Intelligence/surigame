@@ -41,52 +41,22 @@ loop do
         content_type = "text/html"
       end
     elsif File.directory?(path)
-      if File.file?(File.join(path, 'index.html'))
-        data = File.read(File.join(path, 'index.html'))
-        content_type = "text/html"
+      if File.file?(File.join(path, 'index.txt'))
+        data = File.read(File.join(path, 'index.txt'))
+        content_type = "text/plain"
       else
         listing = Dir.entries(path)
-        content_type = "text/html"
+        content_type = "text/plain"
 
         # Create the HTML header
-        data = "<html>\n"
-        data += "  <head>\n"
-        data += "    <title>Directory Listing</title>\n"
-        data += "    <style>\n"
-        data += "      body {\n"
-        data += "        font-family: Arial, sans-serif;\n"
-        data += "      }\n"
-        data += "      table {\n"
-        data += "        border-collapse: collapse;\n"
-        data += "      }\n"
-        data += "      th, td {\n"
-        data += "        border: 1px solid #ddd;\n"
-        data += "        padding: 8px;\n"
-        data += "      }\n"
-        data += "    </style>\n"
-        data += "  </head>\n"
-        data += "  <body>\n"
-        data += "    <h1>Directory Listing for #{ Dir.pwd }</h1>\n"
-        data += "    <table>\n"
-        data += "      <tr>\n"
-        data += "        <th>Name</th>\n"
-        data += "        <th>Type</th>\n"
-        data += "      </tr>\n"
+        data = "Directory:\n"
 
         # Add each directory entry to the HTML table
         listing.each do |entry|
-          next if entry == '.' || entry == '..'
+          #next if entry == '.' || entry == '..'
 
-          data += "      <tr>\n"
-          data += "        <td><a href=\"#{File.join(original_path, entry)}\">#{entry}</a></td>\n"
-          data += "        <td>#{File.directory?(entry) ? 'Directory' : 'File'}</td>\n"
-          data += "      </tr>\n"
+          data += "#{File.directory?(entry) ? 'DIR  ' : 'FILE '} #{entry}\n"
         end
-
-        # Close the HTML tags
-        data += "    </table>\n"
-        data += "  </body>\n"
-        data += "</html>\n"
       end
     else
       data = "Oops, that page wasn't found! Go back to <a href=\"/\">the starting page</a>?"

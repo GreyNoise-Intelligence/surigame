@@ -1,3 +1,12 @@
+function atob_better(base64) {
+  const binaryString = atob(base64);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return new TextDecoder('utf-8').decode(bytes); // Convert bytes to UTF-8
+}
+
 const highlight_completed_levels = () => {
   let visible = JSON.parse(localStorage.getItem('visible-levels') || '{}');
   let completed = JSON.parse(localStorage.getItem('completed-levels') || '{}');

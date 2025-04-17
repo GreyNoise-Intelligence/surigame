@@ -107,20 +107,13 @@ def get_level(id)
   return LEVELS_BY_ID[id]&.slice(*PUBLIC_FIELDS)
 end
 
-MARKDOWN = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, tables: true, prettify: true)
+MARKDOWN = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, tables: true, prettify: true, fenced_code_blocks: true)
 def md(text)
   return MARKDOWN.render(text)
 end
 
 def format_http(http)
   headers, body = http.split(/\r?\n\r?\n/, 2)
-
-  # Connection: close is mandatory
-  if headers =~ /^Connection:/i
-    headers = headers.gsub(/^Connection.*/i, 'Connection: close')
-  else
-    headers.concat("\r\nConnection: close")
-  end
 
   # Host: is also mandatory
   unless headers =~ /^Host:/i
@@ -228,9 +221,9 @@ post '/api/exploit/:id' do
   end
 
   # Clean up the request (newlines, etc)
-  pp @body
+  request = @body['request']
   unless @body['dont-fix']
-    request = format_http(@body['request'])
+    request = format_http(request)
   end
 
   # If there are Suricata rules, do that first
@@ -259,8 +252,13 @@ post '/api/exploit/:id' do
     ::Timeout.timeout(10) do
       LOGGER.info("Connecting to #{ level['target'][PROFILE]['host'] }:#{ level['target'][PROFILE]['port'] }")
       s = TCPSocket.new(level['target'][PROFILE]['host'], level['target'][PROFILE]['port'])
+      LOGGER.info("Sending the request to #{ level['target'][PROFILE]['host'] }:#{ level['target'][PROFILE]['port'] }: #{ request.length } bytes")
+      LOGGER.debug("Request: #{ request }")
       s.write(request)
-      response = s.read()
+      LOGGER.info('Reading the response')
+      response = s.readpartial(8192).force_encoding('UTF-8')
+      LOGGER.debug("Response: #{ response }")
+      puts Base64.strict_encode64(response)
 
       return 200, {
         'fixed_request' => ::Base64.strict_encode64(request),

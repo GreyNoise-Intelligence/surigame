@@ -1,7 +1,5 @@
 #!/bin/sh
 
-# FLAG: CTF{tharr-be-draggggons}
-
 # This doesn't actually do anything..... shhhh, they paid us a lot for us to
 # call this AI
 random_number=$(( $RANDOM % 100 ))
