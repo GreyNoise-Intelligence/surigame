@@ -1,4 +1,4 @@
-# HEY Stop looking here! There be dragons! Go look at ../../../../../../../../flag.txt like you're supposed to, hacker!
+# HEY Stop looking here! There be dragons! Hacker!!
 
 require 'webrick'
 require 'cgi'

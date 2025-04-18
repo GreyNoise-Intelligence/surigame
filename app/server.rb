@@ -121,8 +121,16 @@ def format_http(http)
   end
 
   # Make sure they don't mess up content-length
-  if headers =~ /^Content-Length:/i
-    headers = headers.gsub(/^Content-Length.*/i, "Content-Length: #{ (body || '').length }")
+  if headers.start_with?('POST')
+    if headers =~ /^Content-Length:/i
+      headers = headers.gsub(/^Content-Length.*/i, "Content-Length: #{ (body || '').length }")
+    else
+      headers.concat("\r\nContent-Length: #{ (body || '').length }")
+    end
+
+    if headers !~ /^Content-Type:/i
+      headers.concat("\r\nContent-Type: application/x-www-form-urlencoded")
+    end
   end
 
   return [headers, body || ''].join("\r\n\r\n")
@@ -253,12 +261,12 @@ post '/api/exploit/:id' do
       LOGGER.info("Connecting to #{ level['target'][PROFILE]['host'] }:#{ level['target'][PROFILE]['port'] }")
       s = TCPSocket.new(level['target'][PROFILE]['host'], level['target'][PROFILE]['port'])
       LOGGER.info("Sending the request to #{ level['target'][PROFILE]['host'] }:#{ level['target'][PROFILE]['port'] }: #{ request.length } bytes")
-      LOGGER.debug("Request: #{ request }")
+      LOGGER.debug("Request:\n#{ request }")
       s.write(request)
       LOGGER.info('Reading the response')
-      response = s.readpartial(8192).force_encoding('UTF-8')
-      LOGGER.debug("Response: #{ response }")
-      puts Base64.strict_encode64(response)
+      response = s.readpartial(8192)
+
+      LOGGER.debug("Response:\n#{ response&.split(/\r?\n\r?\n/)&.dig(0) }\n[...]")
 
       return 200, {
         'fixed_request' => ::Base64.strict_encode64(request),

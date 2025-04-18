@@ -15,51 +15,21 @@ if($search == '') {
 $result = $db->query($sql);
 
 if(!$result) {
-  echo "<div class='error'>An error occurred while accessing the database. Please try again later.</div>";
-  echo "<div class='error'>Your query:</div>";
-  echo "<pre><tt>$sql</tt></pre>";
-  echo "<div><a href='/'>Back</a></div>";
+  echo "An error occurred while accessing the database. Please try again later.\n";
+  echo "Your query:\n\n";
+  echo "$sql";
   exit(0);
 }
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Dragon Taxonomy</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container mt-4">
-        <h1>Dragon Taxonomy</h1>
 
-        <form method="get" class="mb-4">
-            <div class="input-group">
-                <input type="text" name="search" class="form-control" 
-                       placeholder="Search dragons..." value="<?= htmlspecialchars($search) ?>">
-                <button type="submit" class="btn btn-primary">Search</button>
-            </div>
-        </form>
+Search: <?= $search ?>
 
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Color</th>
-                    <th>Size</th>
-                    <th>Habitat</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php while ($row = $result->fetchArray(SQLITE3_ASSOC)): ?>
-                <tr>
-                    <td><?= htmlspecialchars($row['name']) ?></td>
-                    <td><?= htmlspecialchars($row['color']) ?></td>
-                    <td><?= htmlspecialchars($row['size']) ?></td>
-                    <td><?= htmlspecialchars($row['habitat']) ?></td>
-                </tr>
-                <?php endwhile; ?>
-            </tbody>
-        </table>
-    </div>
-</body>
-</html>
+Name           Color           Size           Habitat
+<?php
+while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+  echo "# " . $row['name'] . "\n";
+  echo "* Color: " . $row['color'] . "\n";
+  echo "* Size: " . $row['size'] . "\n";
+  echo "* Habitat: " . $row['habitat'] . "\n";
+  echo "\n";
+}

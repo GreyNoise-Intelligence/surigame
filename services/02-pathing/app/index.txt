@@ -4,10 +4,8 @@ Exploiting Path Traversal Vulnerabilities
 
 Path traversal attacks involve manipulating URLs to access unauthorized files. Believe it or not, THIS VERY SITE is vulnerable!
 
-All you have to do it access it by visiting: /../../../../../../../flag.txt
+All you have to do is put `../` in your URLs: /../../../../../../../<path>
 
 Go ahead! Use that URI!
 
 (We also render directory listings, so feel free to browse the filesystem!)
-
-If you want to see my horrid Ruby code for the server, it's in /app/server.rb :)

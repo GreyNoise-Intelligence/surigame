@@ -7,9 +7,6 @@ RUN mkdir /app
 COPY server.rb /app/server.rb
 RUN chown -R root:root /app
 
-COPY flag.txt /flag.txt
-RUN chown -R root:root /flag.txt
-
 WORKDIR /var/www/html
 EXPOSE 4000
 

@@ -12,9 +12,6 @@ RUN chown -R root:root /etc/nginx/sites-available/default
 COPY app/ /var/www/html/
 RUN chown -R root:root /var/www/html
 
-COPY flag.txt /flag.txt
-RUN chown -R root:root /flag.txt
-
 # Expose port 80 for Nginx
 EXPOSE 80
 

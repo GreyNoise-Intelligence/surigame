@@ -2,6 +2,28 @@
 <?php
   error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE);
 ?>
+<?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_FILES['dragon_file'])) {
+        $file = $_FILES['dragon_file']['tmp_name'];
+        
+        // We demand FREEDOM (from secure defaults)
+        libxml_disable_entity_loader(false);
+        $dom = new DOMDocument();
+        $dom->loadXML(file_get_contents($file), LIBXML_NOENT | LIBXML_DTDLOAD);
+        
+        echo "Dragon Evidence Found:\n\n";
+
+        echo $dom->saveXML();
+
+        exit(0);
+    }
+
+    print "Missing dragon_file!";
+    exit(0);
+}
+
+?>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -13,21 +35,6 @@
     <div class="container">
         <h1>Dragon Evidence</h1>
 
-<?php
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_FILES['dragon_file'])) {
-        $file = $_FILES['dragon_file']['tmp_name'];
-        
-        // We demand FREEDOM (from secure defaults)
-        libxml_disable_entity_loader(false);
-        $dom = new DOMDocument();
-        $dom->loadXML(file_get_contents($file), LIBXML_NOENT | LIBXML_DTDLOAD);
-        
-        echo "<h2>Dragon Evidence Found:</h2>";
-        echo "<pre>" . htmlspecialchars($dom->saveXML()) . "</pre>";
-    }
-} else {
-?>
         <p>They said dragons were myths... but we know better.</p>
         <p class="fire">Upload your classified XML evidence to expose the truth.</p>
 
@@ -35,9 +42,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="file" name="dragon_file" accept=".xml">
             <input type="submit" value="Submit Evidence">
         </form>
-<?php
-}
-?>
 
         <footer>
             <p>🔥 The truth is out there... 🔥</p>

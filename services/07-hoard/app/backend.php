@@ -21,7 +21,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       } elseif($data['hoardType'] == 'gemstone') {
         $valuation = $data['gems'] * 1000;
       } elseif($data['hoardType'] == 'artifact') {
-        $valuation = shell_exec("/app/valuate-hoard '" . $data['gold'] . "' '" . $data['gems'] . "' '" . $data['artifacts'] . "'");
+        $cmd = "/app/valuate-hoard '" . $data['gold'] . "' '" . $data['gems'] . "' '" . $data['artifacts'] . "'";
+        $valuation = shell_exec($cmd);
+
+        if(!$valuation) {
+          echo json_encode([
+            "status" => "error",
+            "message" => "Command failed: $cmd"
+          ]);
+        exit(1);
+        }
       } else {
         http_response_code(400);
         echo json_encode([

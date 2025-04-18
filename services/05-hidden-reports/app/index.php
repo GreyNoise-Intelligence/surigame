@@ -18,10 +18,10 @@ function verify_credentials($password) {
 
     return $count > 0;
   } catch (PDOException $e) {
-    echo "<div class='error'>An error occurred while accessing the database. Please try again later.</div>";
-    echo "<div class='error'>Your query:</div>";
-    echo "<pre><tt>$query</tt></pre>";
-    echo "<div><a href='/'>Back</a></div>";
+    echo "An error occurred while accessing the database.\n";
+    echo "Your query:\n";
+    echo "\n";
+    echo "$query\n";
     exit(0);
   }
 }
@@ -35,11 +35,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!empty($_POST['passphrase'])) {
         if (verify_credentials($_POST['passphrase'])) {
-            $_SESSION['authenticated'] = true;
-            header('Location: /');
-            exit;
+          $_SESSION['authenticated'] = true;
+        } else {
+          echo "⚠️ Incorrect password. Access denied!"; // Set error message
+          exit(0);
         }
-        $error = "⚠️ Incorrect password. Access denied!"; // Set error message
     }
 }
 
@@ -51,39 +51,18 @@ if (is_authenticated()) {
 
 function display_classified_dossier() {
     echo <<<HTML
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="style.css">
-        <title>Top Secret Dragon Dossier</title>
-    </head>
-    <body>
-        <div class="container">
-            <div class="classified">
-                <h2>🐉 TOP SECRET: DRAGON INCURSION IMMINENT 🐉</h2>
-                <p><strong>Flag:</strong> <tt>CTF{select-or-one-equals-one}</tt></p>
-                <p><strong>Codename:</strong> Operation Firestorm</p>
-                <p><strong>Threat Level:</strong> Apocalyptic</p>
-                <p><strong>ETA:</strong> 2025-04-15T18:00:00Z</p>
-                <div class="details">
-                    <p><strong>Primary Entry Point:</strong> Mount St. Helens Caldera</p>
-                    <p><strong>Estimated Hostiles:</strong> 12 Ancient Wyrms + Support</p>
-                    <p><strong>Recommended Countermeasures:</strong></p>
-                    <div class="countermeasures">
-                        <p>- Mobilize Dragon Slayer Division</p>
-                        <p>- Activate Arcane Shield Grid</p>
-                        <p>- Deploy Anti-Air Ballistae</p>
-                    </div>
-                </div>
-                <form method="post">
-                    <button type="submit" name="logout">Burn Document</button>
-                </form>
-            </div>
-        </div>
-    </body>
-    </html>
+      🐉 TOP SECRET: DRAGON INCURSION IMMINENT 🐉
+
+      Codename: Operation Firestorm
+      Threat Level: Apocalyptic
+      ETA: 2025-08-15T18:00:00Z
+      Primary Entry Point: Mount St. Helens Caldera
+      Estimated Hostiles: 12 Ancient Wyrms + Support
+
+      Recommended Countermeasures:
+      * Mobilize Dragon Slayer Division
+      * Activate Arcane Shield Grid
+      * Deploy Anti-Air Ballistae
 HTML;
 }
 
