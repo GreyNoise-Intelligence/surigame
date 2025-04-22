@@ -1,0 +1,74 @@
+name: 'Suricata 101 (Metadata)'
+type: suricata
+divider_before: 'Suricata'
+
+text: |-
+  For this section, we're going to be writing some Suricata rules, so let's learn
+  some Suricata!
+
+  Note that like before, we're actually matching PCAPs with Suricata behind the
+  scenes!
+
+  Remember: it's really easy to overfit to bypass all these challenges, and if
+  you want to solve them that way it's cool! But the point is to learn a bit of
+  Suricata so we can explore ways to bypass rules!
+
+  ---
+
+  ### Metadata
+
+  A Suricata rule starts with an action - in our examples, we'll always use `alert`.
+
+  Next, a protocol - for our rules we'll always use `http`, but you're welcome to
+  use `tcp` or others if you think it'll help!
+
+  That's followed by source ip(s) / source port(s) / destination ip(s) / destination
+  port(s), as well as a direction indictor. We're always going to use `any` for
+  everything and left to right for the arrow.
+
+  After the little header, a list of rules and metadata are in parentheses.
+
+  So far, that gives us:
+
+  ```
+  alert http any any -> any any ( ...rules and metadata... )
+  ```
+
+  Within the parentheses are a mix of metadata and rules. The rules are a mix
+  of selecting buffers, taking actions on buffers, and modifying those actions.
+
+  There's technically only a single required metadata field, `sid`:
+
+  * `sid` - a unique numerical identifier that MUST be globally unique (though in our case, any number will work fine - we ignore it)
+
+  As a result, this is a valid (but pointless) rule:
+
+  ```
+  alert http any any -> any any (sid: 123456; )
+  ```
+
+  Other common metadata fields are:
+
+  * `msg` - the message printed when it matches
+  * `rev` - the (numerical) revision of the rule, if it's been updated
+  * `flow` - the direction/type of session to match (we'll always use `flow:to_server,established`)
+
+  With those pieces of metadata, here's what an empty rule looks like:
+
+  ```
+  alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; sid:123456; rev:1;)
+  ```
+
+  We'll use that as the basis for all of our rules!
+
+  **Goal: Write a syntacically valid rule**
+
+
+base_rule: ''
+
+evil_requests:
+  - |-
+    GET / HTTP/1.1
+    Host: localhost
+
+innocent_requests: []

@@ -1,0 +1,31 @@
+name: 'SQL Injection (Search)'
+type: suricata
+
+text: |-
+  Can you detect our search-based SQL injection?
+
+base_rule: |-
+  alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; sid:123456; rev:1;)
+
+evil_requests:
+  - |-
+    GET /?search=')+or+'1'='1'-- HTTP/1.1
+    Host: localhost
+
+  - |-
+    GET /?search=')-- HTTP/1.1
+    Host: localhost
+
+
+innocent_requests:
+  - |-
+    GET / HTTP/1.1
+    Host: localhost
+
+  - |-
+    GET /?search=nebula HTTP/1.1
+    Host: localhost
+
+  - |-
+    GET /?search=nebula&button=ron's+annoying+apostrophe HTTP/1.1
+    Host: localhost

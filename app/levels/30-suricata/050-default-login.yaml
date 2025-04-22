@@ -1,0 +1,31 @@
+name: 'Default Login'
+type: suricata
+
+text: |-
+  Let's match a default login!
+
+  There are two very different ways to solve this:
+
+  1. Match the exact base64 string `YWRtaW46YWRtaW4`
+  2. Use `base64_decode` - [docs](https://docs.suricata.io/en/latest/rules/base64-keywords.html#base64-decode)
+
+  You're welcome to do it other ways, but the first method is actually unsafe, and we'll see why later!
+
+base_rule: |-
+  alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; sid:123456; rev:1;)
+
+evil_requests:
+  - |-
+    GET /avert-disaster.php HTTP/1.1
+    Host: localhost
+    Authorization: basic YWRtaW46YWRtaW4
+
+innocent_requests:
+  - |-
+    GET / HTTP/1.1
+    Host: localhost
+
+  - |-
+    GET /avert-disaster.php HTTP/1.1
+    Host: localhost
+    Authorization: dXNlcjpwYXNzd29yZA==

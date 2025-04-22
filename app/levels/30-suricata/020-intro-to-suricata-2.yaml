@@ -1,0 +1,84 @@
+name: 'Suricata 101 (HTTP)'
+type: suricata
+
+text: |-
+  All right! Let's learn how to match HTTP fields!
+
+  In our last intro, we made a rule that looked something like:
+
+  ```
+  alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; sid:123456; rev:1;)
+  ```
+
+  But that's gonna match everything! We only want to match certain packets, otherwise we don't have a very useful detection system.
+
+  (Note: since this is a game, it's very easy to overfit your matches to the exact payloads you need to find / avoid - I suggest treating this as "real" for a better experience!)
+
+  ### HTTP Keywords
+
+  There are innumerable rules for matching different parts of HTTP. If you want to see a full list, you can get it at Suricata's website:
+
+  https://docs.suricata.io/en/latest/rules/http-keywords.html
+
+  We'll introduce keywords as you need them, but you're welcome to use whatever you like (if it works)!
+
+  The most important fields for matching HTTP are:
+
+  * `http.method` - the method (GET/POST)
+  * `http.uri` - the URL (normalized and URI decoded)
+    * `http.uri.raw` - non-normalized version
+  * `http.header` - the (full) headers (normalized)
+    * `http.header.raw` - the non-normalized version
+  * `http.cookie` - specifically the `Cookie:` header
+  * `http.content_type` - the Content-Type header
+  * `http.request_body` - the request body
+
+  You use these fields by first selecting them as a buffer, then using one or
+  more matches (typically `content` or `pcre`); ie:
+
+  ```
+  http.uri; content: "/my/path.php";
+  ```
+
+  or:
+
+  ```
+  http.uri; pcre: "/\/[a-z]{4}\.php/i";
+  ```
+
+  or both:
+
+  ```
+  http.uri; content: "/my"; pcre: "/\/[a-z]{4}\.php/i";
+  ```
+
+  (Note: I typically put the rule between the `flow` and `sid` fields, but that's a personal choice)
+
+  **Goal: Match payloads with the following two characteristics:**
+
+  1. The URI (`http.uri`) is `/backdoor.php`
+  2. The cookie (`http.cookie` or `http.header`) is `abc=123`
+
+base_rule: |-
+  alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; sid:123456; rev:1;)
+
+evil_requests:
+  - |-
+    GET /backdoor.php HTTP/1.1
+    Cookie: abc=123
+    Host: localhost
+
+  - |-
+    GET /some/path/backdoor.php HTTP/1.1
+    Cookie: abc=123
+    Host: localhost
+
+innocent_requests:
+  - |-
+    GET / HTTP/1.1
+    Cookie: abc=123
+    Host: localhost
+
+  - |-
+    GET /backdoor.php HTTP/1.1
+    Host: localhost

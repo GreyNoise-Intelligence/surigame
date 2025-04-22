@@ -6,10 +6,12 @@
   <pre class="code" id="request-<%= evil_request['id'] %>" style="min-height: 0px"><%= evil_request['request'] %></pre>
 <% end %>
 
-<h2>Innocent request(s)</h2>
+<% if level['innocent_requests'] && level['innocent_requests'].length > 0 %>
+  <h2>Innocent request(s)</h2>
 
-<p>You  must NOT block these requests:</p>
+  <p>You  must NOT block these requests:</p>
 
-<% for innocent_request in level['innocent_requests'] %>
-  <pre class="code" id="request-<%= innocent_request['id'] %>" style="min-height: 0px"><%= innocent_request['request'] %></pre>
+  <% for innocent_request in level['innocent_requests'] %>
+    <pre class="code" id="request-<%= innocent_request['id'] %>" style="min-height: 0px"><%= innocent_request['request'] %></pre>
+  <% end %>
 <% end %>

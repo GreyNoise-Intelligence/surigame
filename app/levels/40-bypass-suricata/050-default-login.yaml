@@ -1,0 +1,25 @@
+name: 'Default login'
+type: 'exploit'
+
+text: |-
+  **Goal: Log in as admin:admin**
+
+hints: []
+
+target:
+  dev:
+    host: localhost
+    port: 10003
+  prod:
+    host: detector
+    port: 80
+
+base_request: |-
+  GET /avert-disaster.php HTTP/1.1
+  Host: localhost
+  Authorization: basic YWRtaW46YWRtaW4
+
+rules:
+- 'alert http any any -> any any (msg:"%%ID%%"; flow:to_server,established; http.method; content:"GET"; http.uri.raw; content:".."; sid:1030005; rev:1;)'
+
+expected_output: "Congratulations!"

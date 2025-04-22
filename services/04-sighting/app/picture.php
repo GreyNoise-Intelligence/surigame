@@ -1,7 +1,7 @@
 <?php
 // Check if the file parameter is provided
 if (isset($_REQUEST['file'])) {
-    $filePath = $_REQUEST['file'];
+    $filePath = chop($_REQUEST['file']);
 
     // Check if the file exists and is readable
     if (file_exists($filePath) && is_readable($filePath)) {

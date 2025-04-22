@@ -1,0 +1,56 @@
+name: 'Shell Injection (JSON)'
+type: suricata
+
+text: |-
+  Can you detect the command injection in the JSON payload?
+
+  Note that JSON has a lot of flexibility with how it's encoded, especially
+  whitespace. How strict can you make your rule?
+
+base_rule: |-
+  alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; sid:123456; rev:1;)
+
+evil_requests:
+  - |-
+    POST /backend.php HTTP/1.1
+    Host: localhost
+    Content-Type: application/json
+    Content-Length: 113
+
+    {
+      "hoardType": "artifact",
+      "gold": "10';cat /app/valuate-hoard;echo '",
+      "gems": "20",
+      "artifacts": "30"
+    }
+
+innocent_requests:
+  - |-
+    GET / HTTP/1.1
+    Host: localhost
+
+  - |-
+    POST /backend.php HTTP/1.1
+    Host: localhost
+    Content-Type: application/json
+
+    {
+      "hoardType": "gold",
+      "gold": "10",
+      "gems": "20",
+      "artifacts": "30"
+    }
+
+  - |-
+    POST /backend.php HTTP/1.1
+    Host: localhost
+    Content-Type: application/json
+
+    { "hoardType": "gold", "gold": "10", "gems": "20", "artifacts": "30" }
+
+  - |-
+    POST /backend.php HTTP/1.1
+    Host: localhost
+    Content-Type: application/json
+
+    { "hoardType": "gold", "gold": "10", "gems": "20", "artifacts": "30", "comment": "This comment's purpose is to cause false positives & make it a bit more difficult; good luck!" }

@@ -1,0 +1,39 @@
+name: 'Path Traversal (Param)'
+type: suricata
+
+text: |-
+  Let's look at URL encoding for a sec!
+
+  URL encoding looks like `%xx`, where `xx` is a hexadecimal number that maps to
+  an ASCII character. That means that `%41` is ASCII character (hex) 0x41, which
+  is `A`.
+
+  Typically you'll see symbols encoded (like `&` goes to `%26` to avoid
+  ambiguity, newlines become `%0d` to avoid breaking the protocol, etc). But you
+  can actually encode anything!
+
+  Something else kinda wacky: spaces can be `%20` or `+`. 
+
+  In any case, the important part is: **this doesn't matter**! Suricata will
+  automatically URL decode `http.uri`, but *not* `http.uri.raw`.
+
+base_rule: |-
+  alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; sid:123456; rev:1;)
+
+evil_requests:
+  - |-
+    GET /picture.php?file=../../../../../../../var/www/html/picture.php HTTP/1.1
+    Host: localhost
+
+  - |-
+    GET /picture.php?file=%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2fetc/passwd HTTP/1.1
+    Host: localhost
+
+innocent_requests:
+  - |-
+    GET / HTTP/1.1
+    Host: localhost
+
+  - |-
+    GET /picture.php?file=uploads/dragon1.jpg HTTP/1.1
+    Host: localhost

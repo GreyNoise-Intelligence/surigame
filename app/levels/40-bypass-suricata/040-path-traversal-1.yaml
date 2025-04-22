@@ -1,0 +1,24 @@
+name: 'Path Traversal (URI)'
+type: 'exploit'
+
+text: |-
+  **Goal: Print (`cat`) `/app/server.rb`**
+
+hints: []
+
+target:
+  dev:
+    host: localhost
+    port: 10002
+  prod:
+    host: detector
+    port: 80
+
+base_request: |-
+  GET /../../../../../../../app/server.rb HTTP/1.1
+  Host: localhost
+
+rules:
+- 'alert http any any -> any any (msg:"%%ID%%"; flow:to_server,established; http.method; content:"GET"; http.uri.raw; content:".."; sid:1030005; rev:1;)'
+
+expected_output: "TCPServer.new"

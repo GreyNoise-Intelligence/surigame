@@ -1,0 +1,43 @@
+name: 'SQL Injection (Login)'
+type: suricata
+
+text: |-
+  Can you detect our login SQL injection?
+
+  To be extra annoying, we put an apostrophe (`'`) in an innocent field. Be
+  careful with those false positives!
+
+base_rule: |-
+  alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; sid:123456; rev:1;)
+
+evil_requests:
+  - |-
+    POST / HTTP/1.1
+    Host: localhost
+    Content-Length: 21
+    Content-Type: application/x-www-form-urlencoded
+
+    passphrase='or '1'='1
+  - |-
+    POST / HTTP/1.1
+    Host: localhost
+    Content-Length: 18
+    Content-Type: application/x-www-form-urlencoded
+
+    passphrase='or''='
+
+innocent_requests:
+  - |-
+    GET / HTTP/1.1
+    Host: localhost
+
+  - |-
+    POST / HTTP/1.1
+    Host: localhost
+
+    passphrase=thisisnotthepassword
+  - |-
+    POST / HTTP/1.1
+    Host: localhost
+
+    passphrase=thisisnotthepassword&innocentfield=ron's+annoying+apostrophe

@@ -1,0 +1,56 @@
+name: 'Path Traversal (Bonus!))'
+type: suricata
+
+text: |-
+  I want to take this opportunity to look at URL encoding in the POST body. The
+  `Path Traversal (2)` challenge supports POST arguments.
+
+  In the last level, we learned that `http.uri` is automatically URL decoded.
+  This is where you learn that `http.request_body` is *not*.
+
+  To resolve this, add `url_decode` between selecting the buffer and matching
+  content; ie:
+
+  ```
+  http.uri; url_decode; content: "...";
+  ```
+
+base_rule: |-
+  alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; sid:123456; rev:1;)
+
+evil_requests:
+  - |-
+    POST /picture.php HTTP/1.1
+    Host: localhost
+    Content-Length: 51
+    Content-Type: application/x-www-form-urlencoded
+
+    file=../../../../../../../var/www/html/picture.php
+
+
+  - |-
+    POST /picture.php HTTP/1.1
+    Host: localhost
+    Content-Length: 78
+    Content-Type: application/x-www-form-urlencoded
+
+    file=%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2fetc/passwd
+
+innocent_requests:
+  - |-
+    GET / HTTP/1.1
+    Host: localhost
+
+  - |-
+    POST / HTTP/1.1
+    Host: localhost
+    Content-Length: 0
+    Content-Type: application/x-www-form-urlencoded
+
+  - |-
+    POST /picture.php HTTP/1.1
+    Host: localhost
+    Content-Length: 24
+    Content-Type: application/x-www-form-urlencoded
+
+    file=uploads/dragon3.jpg

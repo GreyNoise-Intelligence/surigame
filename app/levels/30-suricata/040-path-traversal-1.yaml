@@ -1,0 +1,31 @@
+name: 'Path Traversal (URI)'
+type: suricata
+
+text: |-
+  Below is the URL path traversal solution.
+
+  The teachable moment here is that the `http.uri` field is normalized by
+  Suricata, which removes path traversal characters; in other words, `a/b/../c`
+  becomes `a/c`.
+
+  To get around this, use `http.uri.raw` instead.
+
+  `http.uri.raw` has other implications, as we'll find out later!
+
+base_rule: |-
+  alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; sid:123456; rev:1;)
+
+evil_requests:
+  - |-
+    GET /../../../app/server.rb HTTP/1.1
+    Host: localhost
+
+  - |-
+    GET /../../../etc/passwd HTTP/1.1
+    Host: localhost
+
+
+innocent_requests:
+  - |-
+    GET / HTTP/1.1
+    Host: localhost

@@ -1,0 +1,29 @@
+name: 'Introduction'
+type: 'text'
+divider_before: 'Exploitation'
+
+text: |-
+  All right, hopefully you've learned enough exploitation and Suricata to have
+  a firm foundation!
+
+  In this section, we'll show you one of the exploits from earlier, and one
+  or more associated Suricata rules. Your goal will be to find ways to bypass
+  the rule!
+
+  We might give you hints, we might not.
+
+  Also, there are likely many solutions to each level. It's up to you how you
+  want to do it!
+
+  Some tips to try:
+
+  * `GET` vs `POST` methods
+  * URI (`http.uri`) args vs POST body (`http.request_body`) args
+  * Different ways of doing the same thing (injection characters, seperators, etc)
+  * URLEncoding (`A` -> `%41`) or NOT URLEncoding
+  * Adding characters (like whitespace in JSON) that get ignored
+  * Changing free-form strings (like a multipart boundary)
+
+  And lots more!
+
+  I'm looking forward to hearing what you figure out!
