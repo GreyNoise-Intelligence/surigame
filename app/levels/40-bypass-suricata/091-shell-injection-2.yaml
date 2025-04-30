@@ -9,13 +9,7 @@ text: |-
 
 hints: []
 
-target:
-  dev:
-    host: localhost
-    port: 10007
-  prod:
-    host: detector
-    port: 80
+target: hoard
 
 base_request: |-
   POST /backend.php HTTP/1.1

@@ -1,11 +1,20 @@
 services:
-  # web:
-  #   build:
-  #     context: ./app/
-  #     dockerfile: Dockerfile
-  #   container_name: web
-  #   ports:
-  #     - "1234:1234"
+  web:
+    build:
+      context: ./app/
+      dockerfile: Dockerfile
+    container_name: web
+    ports:
+      - "1234:1234"
+    depends_on:
+      - detector
+      - pathing
+      - extinction
+      - sighting
+      - hidden-reports
+      - taxonomy
+      - hoard
+      - evidence
 
   detector:
     build:

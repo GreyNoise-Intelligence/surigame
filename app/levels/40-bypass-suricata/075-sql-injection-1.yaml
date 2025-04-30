@@ -9,13 +9,7 @@ text: |-
 
 hints: []
 
-target:
-  dev:
-    host: localhost
-    port: 10005
-  prod:
-    host: detector
-    port: 80
+target: hidden-reports
 
 base_request: |-
   POST / HTTP/1.1

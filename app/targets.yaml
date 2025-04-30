@@ -1,0 +1,71 @@
+detector:
+  dev:
+    host: localhost
+    port: 10001
+
+  prod:
+    host: detector
+    port: 80
+
+pathing:
+  dev:
+    host: localhost
+    port: 10002
+
+  prod:
+    host: pathing
+    port: 80
+
+extinction:
+  dev:
+    host: localhost
+    port: 10003
+
+  prod:
+    host: extinction
+    port: 80
+
+sighting:
+  dev:
+    host: localhost
+    port: 10004
+
+  prod:
+    host: sighting
+    port: 80
+
+hidden-reports:
+  dev:
+    host: localhost
+    port: 10005
+
+  prod:
+    host: hidden-reports
+    port: 80
+
+taxonomy:
+  dev:
+    host: localhost
+    port: 10006
+
+  prod:
+    host: taxonomy
+    port: 80
+
+hoard:
+  dev:
+    host: localhost
+    port: 10007
+
+  prod:
+    host: hoard
+    port: 80
+
+evidence:
+  dev:
+    host: localhost
+    port: 10008
+
+  prod:
+    host: evidence
+    port: 80

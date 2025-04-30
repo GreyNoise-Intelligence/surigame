@@ -11,13 +11,7 @@ text: |-
 
 hints: []
 
-target:
-  dev:
-    host: localhost
-    port: 10002
-  prod:
-    host: detector
-    port: 80
+target: pathing
 
 base_request: |-
   GET /../../../../../../../app/server.rb HTTP/1.1

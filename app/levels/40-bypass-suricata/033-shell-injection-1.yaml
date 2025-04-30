@@ -9,13 +9,7 @@ text: |-
 
 hints: []
 
-target:
-  dev:
-    host: localhost
-    port: 10001
-  prod:
-    host: detector
-    port: 80
+target: detector
 
 base_request: |-
   POST /detect-dragon.php HTTP/1.1

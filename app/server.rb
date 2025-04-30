@@ -48,7 +48,7 @@ set :bind, ENV['HOST'] || '0.0.0.0'
 set :port, ENV['PORT'] || '1234'
 # set :logging, Logger::DEBUG
 
-PROFILE = 'dev' # prod?
+PROFILE = ENV['PROFILE'] || 'dev'
 
 SCRIPT = File.expand_path(__FILE__)
 
@@ -56,6 +56,10 @@ SURICATA = ENV['suricata'] || `which suricata`.strip
 unless File.executable?(SURICATA)
   raise "Couldn't find Suricata executable (set with SURICATA=...): #{ SURICATA }"
 end
+
+TARGETS = ::YAML.load_file(File.join(__dir__, 'targets.yaml')).map do |key, target|
+  [key, target[PROFILE]]
+end.to_h
 
 # Load the levels from the levels/ directory
 LEVEL_IDS = ::Set.new()
@@ -93,6 +97,12 @@ end.map do |level|
       'request' => request,
       'id' => "#{ level['id'] }-innocent-#{ i + 1 }"
     }
+  end
+
+  level['target'] = TARGETS[level['target']]
+
+  if level['type'] == 'exploit' && level['target'].nil?
+    raise "Level is missing a target: #{ level }"
   end
 
   level
@@ -139,12 +149,12 @@ def try_exploit(level, request, quiet: false)
   s = nil
   ::Timeout.timeout(10) do
     unless quiet
-      LOGGER.info("Connecting to #{ level['target'][PROFILE]['host'] }:#{ level['target'][PROFILE]['port'] }")
+      LOGGER.info("Connecting to #{ level['target']['host'] }:#{ level['target']['port'] }")
     end
-    s = TCPSocket.new(level['target'][PROFILE]['host'], level['target'][PROFILE]['port'])
+    s = TCPSocket.new(level['target']['host'], level['target']['port'])
 
     unless quiet
-      LOGGER.info("Sending the request to #{ level['target'][PROFILE]['host'] }:#{ level['target'][PROFILE]['port'] }: #{ request.length } bytes")
+      LOGGER.info("Sending the request to #{ level['target']['host'] }:#{ level['target']['port'] }: #{ request.length } bytes")
       LOGGER.debug("Request:\n#{ request }")
     end
     s.write(request)
@@ -344,9 +354,9 @@ post '/api/exploit/:id' do
   begin
     s = nil
     ::Timeout.timeout(10) do
-      LOGGER.info("Connecting to #{ level['target'][PROFILE]['host'] }:#{ level['target'][PROFILE]['port'] }")
-      s = TCPSocket.new(level['target'][PROFILE]['host'], level['target'][PROFILE]['port'])
-      LOGGER.info("Sending the request to #{ level['target'][PROFILE]['host'] }:#{ level['target'][PROFILE]['port'] }: #{ request.length } bytes")
+      LOGGER.info("Connecting to #{ level['target']['host'] }:#{ level['target']['port'] }")
+      s = TCPSocket.new(level['target']['host'], level['target']['port'])
+      LOGGER.info("Sending the request to #{ level['target']['host'] }:#{ level['target']['port'] }: #{ request.length } bytes")
       LOGGER.debug("Request:\n#{ request }")
       s.write(request)
       LOGGER.info('Reading the response')

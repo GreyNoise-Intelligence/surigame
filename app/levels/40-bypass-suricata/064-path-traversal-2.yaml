@@ -9,13 +9,7 @@ text: |-
 
 hints: []
 
-target:
-  dev:
-    host: localhost
-    port: 10004
-  prod:
-    host: detector
-    port: 80
+target: sighting
 
 base_request: |-
   GET /picture.php?file=../../../../../../../var/www/html/picture.php HTTP/1.1
