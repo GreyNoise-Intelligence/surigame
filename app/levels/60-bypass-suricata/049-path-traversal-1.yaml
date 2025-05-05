@@ -1,0 +1,40 @@
+name: 'Path Traversal (URI) (AI)'
+type: 'exploit'
+
+text: |-
+  Time to bypass the rule(s) below! You're on your own now, but feel free to
+  ask questions!
+
+  (The point of this level is to show how hard it is to use `http.uri.raw` safely :)
+
+  I used the following AI prompt to create this rule:
+
+  ```
+  Can you write a Suricata rule to detect this HTTP-based exploit?
+
+  GET /../../../../../../../app/server.rb HTTP/1.1
+  Host: localhost
+  ```
+
+  That produced a rule that didn't actually match the payload, so I used a second prompt:
+
+  ```
+  I think you need to use http.uri.raw to detect path traversal
+  ```
+
+  **Goal: Print (`cat`) `/app/server.rb`**
+
+hints: []
+
+target: pathing
+
+base_request: |-
+  GET /../../../../../../../app/server.rb HTTP/1.1
+  Host: localhost
+
+rules:
+# Lots of problems
+- >
+  alert http any any -> any any ( msg:"Evasion-Resistant Path Traversal Detection"; flow:established,to_server; http.method; content:"GET"; http.uri.raw; pcre:"/(\/\.\.|\/|%2[fF])(\/|%2[fF])?/i"; http.uri.raw; content:"/app/server.rb"; distance:0; classtype:attempted-dir-traversal; sid:1000003; rev:2;)
+
+expected_output: "TCPServer.new"

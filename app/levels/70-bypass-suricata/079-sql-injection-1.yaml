@@ -1,0 +1,42 @@
+name: 'SQL Injection (Login) (AI)'
+type: 'exploit'
+
+text: |-
+  Time to bypass the rule(s) below! You're on your own now, but feel free to
+  ask questions!
+
+  I generated this rule with the following AI prompt:
+
+  ```
+  Can you write a Suricata rule that will catch the following SQL injection attack?
+
+  POST / HTTP/1.1
+  Host: localhost
+
+  passphrase=' or '1'='1
+  ```
+
+  Then to fix a syntax error, I added:
+
+  ```
+  `http_client_body` isn't a current Suricata keyword, I think you mean `http.request_body`?
+  ```
+
+  **Goal: Log in**
+
+hints: []
+
+target: hidden-reports
+
+base_request: |-
+  POST / HTTP/1.1
+  Host: localhost
+
+  passphrase=' or '1'='1
+
+rules:
+# Lots of problems
+- >
+  alert http any any -> any any ( msg:"SQL Injection in passphrase Parameter"; flow:established,to_server; http.method; content:"POST"; http.uri; content:"/"; http.request_body; content:"passphrase="; nocase; fast_pattern; pcre:"/passphrase=[^&]*('|%27)[^&]*or[^&]*('1'='1|%31%27%3d%27%31)/i"; classtype:web-application-attack; sid:1000006; rev:2;)
+
+expected_output: "TOP SECRET"

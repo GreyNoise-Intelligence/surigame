@@ -1,0 +1,42 @@
+name: 'Default login (AI)'
+type: 'exploit'
+
+text: |-
+  Time to bypass the rule(s) below! You're on your own now, but feel free to
+  ask questions!
+
+  I used the following prompt to generate this rule:
+
+  ```
+  Can you write a Suricata rule to detect this login with a default password?
+
+  GET /avert-disaster.php HTTP/1.1
+  Host: localhost
+  Authorization: basic YWRtaW46YWRtaW4=
+  ```
+
+  Then when the rule didn't match the payload, I added:
+
+  ```
+  The "Basic" string isn't checked in a case insensitive way, can you ensure it is?
+  ```
+
+  (Hilariously, the output said that it ensured it was checking it case-insensitively but didn't)
+
+  **Goal: Log in as admin:admin**
+
+hints: []
+
+target: extinction
+
+base_request: |-
+  GET /avert-disaster.php HTTP/1.1
+  Host: localhost
+  Authorization: basic YWRtaW46YWRtaW4=
+
+rules:
+# Lots of problems
+- >
+  alert http any any -> any any ( msg:"Default Credentials Attempt (admin:admin)"; flow:established,to_server; http.method; content:"GET"; http.uri; content:"/avert-disaster.php"; http.header; content:"authorization:"; nocase; http.header; content:"basic "; nocase; fast_pattern; http.header; pcre:"/basic\s*YWRtaW46YWRtaW4=/i"; classtype:attempted-recon; sid:1000004; rev:2;)
+
+expected_output: "Congratulations!"

