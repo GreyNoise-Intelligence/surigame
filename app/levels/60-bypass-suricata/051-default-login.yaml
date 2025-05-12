@@ -16,6 +16,13 @@ base_request: |-
   Host: localhost
   Authorization: basic YWRtaW46YWRtaW4=
 
+solution: |-
+  GET /avert-disaster.php HTTP/1.1
+  Host: localhost
+  Authorization: BASIC YWRtaW46YWRtaW4=
+
+solution_note: Case sensitive, for one thing
+
 rules:
 - >
   alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; http.header; content: "Authorization: basic YWRtaW46YWRtaW4="; sid:123456; rev:1;)

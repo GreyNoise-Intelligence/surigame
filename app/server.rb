@@ -77,7 +77,8 @@ LEVELS = ::Dir.glob(::File.join(__dir__, 'levels', '**', '*.yaml')).sort.map do 
 end.map do |level|
   # Give the Suricata rules a consistent ID
   level['rules'] = level['rules']&.each_with_index&.map do |rule, i|
-    id = "#{ level['id'] }-#{ i + 1 }"
+    rule =~ /sid:\s*([0-9]*)/
+    id = Regexp.last_match(1).to_s
 
     {
       'rule' => rule.gsub('%%ID%%', id),

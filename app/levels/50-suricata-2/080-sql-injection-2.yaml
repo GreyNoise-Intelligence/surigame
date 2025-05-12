@@ -7,6 +7,9 @@ text: |-
 base_rule: |-
   alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; sid:123456; rev:1;)
 
+solution: |-
+  alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; http.uri; content: "search="; pcre: "/search=[^&]*'\)/"; sid:123456; rev:1;)
+
 evil_requests:
   - |-
     GET /?search=')+or+'1'='1'-- HTTP/1.1

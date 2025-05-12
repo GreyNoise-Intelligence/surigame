@@ -62,6 +62,12 @@ const complete_level = (id, name, next, skipped = false) => {
     let visible = JSON.parse(localStorage.getItem('visible-levels') || '{}');
     visible[next] = true;
     localStorage.setItem('visible-levels', JSON.stringify(visible));
+
+    // Enable the next button
+    $('#nextPage').removeClass('disabled');
+    $('#nextPage').on('click', () => {
+      document.location = `/level/${ next }`;
+    });
   }
 
   highlight_completed_levels();

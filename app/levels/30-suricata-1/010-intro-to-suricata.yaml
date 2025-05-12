@@ -66,6 +66,9 @@ text: |-
 
 base_rule: ''
 
+solution: |-
+  alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; sid:123456; rev:1;)
+
 evil_requests:
   - |-
     GET / HTTP/1.1

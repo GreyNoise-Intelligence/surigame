@@ -1,4 +1,4 @@
-name: 'Path Traversal (Bonus!))'
+name: 'Path Traversal (Bonus!)'
 type: suricata
 
 text: |-
@@ -17,6 +17,9 @@ text: |-
 
 base_rule: |-
   alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; sid:123456; rev:1;)
+
+solution: |-
+  alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; http.uri; content: "picture.php"; http.request_body; url_decode; content: "../"; sid:123456; rev:1;)
 
 evil_requests:
   - |-

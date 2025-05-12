@@ -62,6 +62,9 @@ text: |-
 base_rule: |-
   alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; sid:123456; rev:1;)
 
+solution: |-
+  alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; http.uri; content: "backdoor.php"; http.cookie; content: "abc=123"; sid:123456; rev:1;)
+
 evil_requests:
   - |-
     GET /backdoor.php HTTP/1.1
