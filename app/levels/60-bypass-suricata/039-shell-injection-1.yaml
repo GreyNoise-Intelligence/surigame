@@ -16,7 +16,7 @@ text: |-
   Content-Length: 10
   ```
 
-  **Goal: Print (`cat`) the file `/app/dragon-detector-ai`**.
+  **Goal: Print the file `/app/dragon-detector-ai`**.
 
 solution: |-
   POST /detect-dragon.php HTTP/1.1

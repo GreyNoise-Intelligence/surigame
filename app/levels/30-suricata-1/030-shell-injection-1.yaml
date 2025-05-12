@@ -17,7 +17,9 @@ text: |-
   Two important ones are:
 
   * `;` must be escaped as a backslash (`\;`) or converted to a hex string (`|3b|`) - ie, `content: "file\;";` or `content: "file|3b|";`
-  * `|` must be encoded as a hex string (`|7c|`)
+  * `|` must be encoded as a hex string in `content:` fields (`|7c|`)
+
+  If you need to encode in a PCRE, use `\xXX` style - `pcre:"/\x90/"` (you shouldn't need to do this
 
   In general, you can encode anything as a hex string - `content: "abc";` is exactly
   equivalent to `content: "|616263|";` and `content: "a|6163|";` and so on. You shouldn't

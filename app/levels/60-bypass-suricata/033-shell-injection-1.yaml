@@ -5,7 +5,7 @@ text: |-
   Time to bypass the rule(s) below! You're on your own now, but feel free to
   ask questions!
 
-  **Goal: Print (`cat`) the file `/app/dragon-detector-ai`**.
+  **Goal: Print the file `/app/dragon-detector-ai`**.
 
 hints: []
 

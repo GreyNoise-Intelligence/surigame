@@ -52,7 +52,7 @@ body {
 .sidebar-logo img {
   width: 100%; /* Make the logo image full width */
   height: auto; /* Maintain aspect ratio */
-  max-height: 100px; /* Optional: Limit the logo height */
+  max-height: 200px; /* Optional: Limit the logo height */
 }
 
 .sidebar-content {
