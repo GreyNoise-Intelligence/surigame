@@ -1,7 +1,23 @@
+These commands should get you going (I used them on Amazon Linux):
+
 ```
-docker compose build
-docker compose up
+sudo dnf install -y tmux socat docker git
+git clone 'https://github.com/GreyNoise-Intelligence/surigame.git'
+cd surigame
+DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
+mkdir -p $DOCKER_CONFIG/cli-plugins
+curl -SL https://github.com/docker/compose/releases/download/v2.36.0/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker-compose
+chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose
+sudo systemctl start docker
+sudo vim /etc/group
+(add ec2-user to docker group)
+(disconnect / reconnect)
+cd surigame
+tmux
+docker compose build && docker compose up
 ```
+
+## Troubleshooting
 
 This is a version error - use `docker compose` instead of `docker-compose`:
 
