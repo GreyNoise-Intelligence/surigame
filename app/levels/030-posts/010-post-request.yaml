@@ -1,9 +1,12 @@
 name: 'POST request decoding'
 type: 'demo'
 divider_before: 'POST requests'
+should_match: false
 
 text: |-
   POST request with no special encoding are matched using `http.request_body`
+
+  * Goal: Can you keep the same payload but encode to bypass filters?
 
 base_rule: |-
   alert http any any -> any any ( \

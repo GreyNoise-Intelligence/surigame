@@ -1,8 +1,11 @@
 name: 'Automatic space decoding'
 type: 'demo'
+should_match: false
 
 text: |-
   `%20` also gets automatically decoded
+
+  * Goal: Can you keep the same request but hide the space?
 
 base_rule: |-
   alert http any any -> any any ( \
