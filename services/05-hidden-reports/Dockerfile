@@ -1,7 +1,7 @@
 # Dockerfile
 FROM php:8.2-fpm-alpine
 
-RUN apk add --no-cache nginx sqlite sqlite-dev sqlite-libs php82-sqlite3 && \
+RUN apk add --no-cache nginx sqlite sqlite-dev sqlite-libs php83-sqlite3 && \
     mkdir -p /run/nginx && \
     docker-php-ext-install pdo_sqlite session
 
