@@ -16,6 +16,14 @@ services:
       - hoard
       - evidence
 
+  demo:
+    build:
+      context: ./services/00-demo/
+      dockerfile: Dockerfile
+    container_name: demo
+    ports:
+      - "4567:4567"
+
   detector:
     build:
       context: ./services/01-detector/
